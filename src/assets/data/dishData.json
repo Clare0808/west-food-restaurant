@@ -1,0 +1,51 @@
+[
+    {
+        "name": "凍檸茶",
+        "price": 120,
+        "description": "經典港式飲品，清涼解渴的凍檸茶，融合了濃郁的紅茶與新鮮檸檬汁，帶來獨特的酸甜口感。",
+        "image": "/images/drinks/凍檸茶.jpg",
+        "category": "drink"
+    },
+    {
+        "name": "司康",
+        "price": 120,
+        "description": "新鮮出爐的英式司康，外酥內軟，搭配奶油和果醬，完美的下午茶選擇。",
+        "image": "/images/deserts/司康.jpg",
+        "category": "deserts"
+    },
+    {
+        "name": "巴斯克乳酪蛋糕",
+        "description": "濃郁滑順的巴斯克乳酪蛋糕，焦糖化的表面帶來獨特風味，適合喜愛乳酪的你。",
+        "price": 220,
+        "image": "/images/deserts/巴斯克乳酪蛋糕.jpg",
+        "category": "deserts"
+    },
+    {
+        "name": "布朗尼蛋糕",
+        "description": "濃郁巧克力布朗尼，外酥內軟，搭配香草冰淇淋，是甜點愛好者的最愛。",
+        "price": 150,
+        "image": "/images/deserts/布朗尼蛋糕.jpg",
+        "category": "deserts"
+    },
+    {
+        "name": "胡蘿蔔蛋糕",
+        "description": "經典胡蘿蔔蛋糕，加入核桃和香料，搭配奶油乳酪霜，口感豐富且健康。",
+        "price": 180,
+        "image": "/images/deserts/胡蘿蔔蛋糕.jpg",
+        "category": "deserts"
+    },
+    {
+        "name": "香桃法國吐司",
+        "description": "香甜多汁的桃子搭配軟嫩法國吐司，撒上糖粉和楓糖漿，完美的早午餐選擇。",
+        "price": 150,
+        "image": "/images/deserts/香桃法國吐司.jpg",
+        "category": "deserts"
+    },
+    {
+        "name": "馬芬蛋糕",
+        "description": "經典馬芬蛋糕，口感鬆軟，搭配各種口味選擇，如藍莓、巧克力或香蕉。",
+        "price": 120,
+        "image": "/images/deserts/馬芬蛋糕.jpg",
+        "category": "deserts"
+    }
+]
