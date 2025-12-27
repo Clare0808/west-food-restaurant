@@ -3,7 +3,6 @@
     <div class="logo">Le Savor 西饗</div>
     <div class="function-frame">
       <router-link to="/">主頁</router-link>
-      <router-link to="/about">關於我們</router-link>
       <router-link to="/menu">菜單</router-link>
       <router-link to="/review">評論</router-link>
       <router-link to="/contact">客服中心</router-link>
@@ -20,20 +19,29 @@
       </router-link>
     </div>
   </nav>
-  <div class="content-frame">
-    <div class="text-frame">
-      <div class="slogan">細細品味西式料理的藝術。</div>
-      <div class="sec-slogan">精緻餐飲，應該成為日常生活的一部分。</div>
-      <div class="content">
-        我們嚴選高品質食材，以主廚等級的專業手藝精心製作每一道料理，<br />
-        讓您無論何時、在家中也能輕鬆享受餐廳級的西式饗宴。
-      </div>
-      <div class="btn">了解更多</div>
-    </div>
-    <img src="@/assets/homepage2.png" alt="Logo" />
-  </div>
   <router-view />
 </template>
+
+<script>
+import { ref, onMounted } from "vue";
+
+export default {
+  setup() {
+    const showText = ref(false);
+    const showImage = ref(false);
+
+    onMounted(() => {
+      showText.value = true;
+      showImage.value = true;
+    });
+
+    return {
+      showText,
+      showImage,
+    };
+  },
+};
+</script>
 
 <style lang="scss">
 #app {
@@ -43,9 +51,7 @@
   text-align: center;
   color: #272727;
 
-  width: 100vw;
-  height: 100vh;
-  background-image: url("@/assets/background.jpg");
+  background-image: url("@/assets/images/background.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -81,6 +87,9 @@ nav {
   color: #f0c42d;
   transform: scale(1.1);
 }
+.function-frame a:focus {
+  color: #f0c42d;
+}
 .icon-frame i {
   color: #272727;
   font-size: 18px;
@@ -91,48 +100,5 @@ nav {
 .icon-frame i:hover {
   color: #f0c42d;
   transform: scale(1.1);
-}
-
-.content-frame {
-  padding: 20px 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.text-frame {
-  width: 40%;
-  text-align: left;
-}
-.slogan {
-  font-size: 34px;
-  font-weight: bold;
-}
-.sec-slogan {
-  color: #f0c42d;
-  font-size: 26px;
-  margin: 10px 0;
-}
-.btn {
-  width: 150px;
-  height: 40px;
-  color: #ffffff;
-  font-size: 20px;
-  text-align: center;
-  line-height: 40px;
-  // background-color: #d7bd88;
-  background-color: #f0c42d;
-  border-radius: 20px;
-  margin-top: 20px;
-  transition: all 0.3s ease;
-}
-.btn:hover {
-  color: #272727;
-  background-color: #ffea9d;
-  cursor: pointer;
-  transform: scale(1.1);
-}
-img {
-  width: 600px;
-  height: auto;
 }
 </style>
