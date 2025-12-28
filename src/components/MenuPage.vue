@@ -1,74 +1,125 @@
 <template>
   <div class="menu-page">
-    <div class="title">菜單 Menu</div>
-    <div class="options-frame">
-      <div v-for="(opt, index) in optionsData" :key="index">
-        <div class="option" @click="ClickOptions(opt.label)">
-          {{ opt.name }}
+    <transition name="fade">
+      <div class="title" v-if="showText">菜單 Menu</div>
+    </transition>
+    <transition name="slide">
+      <div class="options-frame" v-if="showElement">
+        <div v-for="(opt, index) in OptionsData" :key="index">
+          <div
+            class="option"
+            @click="ClickOptions(opt)"
+            :class="{ active: opt.click }"
+          >
+            {{ opt.name }}
+          </div>
         </div>
       </div>
-    </div>
-    <div class="dish-box-frame">
-      <div class="dish-frame" v-for="(dish, index) in DishData" :key="index">
-        <img :src="dish.image" />
-        <div class="dish-info-frame">
-          <div class="dish-name">{{ dish.name }}</div>
-          <div class="dish-price">${{ dish.price }}</div>
+    </transition>
+    <transition name="slide">
+      <div class="dish-box-frame" v-if="showElement">
+        <div
+          class="dish-frame"
+          v-for="(dish, index) in filteredList"
+          :key="index"
+          @click="ClickDish(dish)"
+        >
+          <img :src="dish.image" />
+          <div class="dish-info-frame">
+            <div class="dish-name">{{ dish.name }}</div>
+            <div class="dish-price">${{ dish.price }}</div>
+          </div>
         </div>
       </div>
-    </div>
+    </transition>
+
+    <div
+      class="overlay"
+      v-show="showOrderPage"
+      @click="showOrderPage = false"
+    ></div>
+    <transition name="slide-order">
+      <OrderDishPage class="order-page" v-show="showOrderPage" />
+    </transition>
   </div>
 </template>
 
 <script>
+import { ref, onMounted } from "vue";
 import DishData from "../assets/data/dishData.json";
+import OptionsData from "../assets/data/optionsData.json";
+import OrderDishPage from "./OrderDishPage.vue";
+
+export const orderList = ref({});
 
 export default {
   name: "MenuPage",
+  components: {
+    OrderDishPage,
+  },
   setup() {
-    const optionsData = [
-      {
-        name: "全部",
-        label: "all",
-      },
-      {
-        name: "飯食",
-        label: "rice",
-      },
-      {
-        name: "麵食",
-        label: "noodle",
-      },
-      {
-        name: "肉類",
-        label: "meat",
-      },
-      {
-        name: "湯品",
-        label: "soup",
-      },
-      {
-        name: "沙拉",
-        label: "salad",
-      },
-      {
-        name: "飲料",
-        label: "drink",
-      },
-      {
-        name: "甜點",
-        label: "deserts",
-      },
-    ];
+    const filteredList = ref([]);
+    const showOrderPage = ref(false);
+    const showText = ref(false);
+    const showElement = ref(false);
 
     const ClickOptions = (opt) => {
-      console.log(opt);
+      filteredList.value = DishData.filter((data) => {
+        return data.category === opt.label;
+      });
+
+      opt.click = true;
+
+      OptionsData.forEach((data) => {
+        if (data.label !== opt.label) {
+          data.click = false;
+        }
+      });
+
+      if (opt.label === "all") {
+        filteredList.value = DishData;
+        opt.click = true;
+
+        OptionsData.forEach((data) => {
+          if (data.label !== "all") {
+            data.click = false;
+          }
+        });
+      }
     };
+
+    const ClickDish = (data) => {
+      showOrderPage.value = true;
+
+      orderList.value.name = data.name;
+      orderList.value.description = data.description;
+      orderList.value.price = data.price;
+      orderList.value.image = data.image;
+    };
+
+    onMounted(() => {
+      showText.value = true;
+      showElement.value = true;
+
+      filteredList.value = DishData;
+
+      OptionsData.forEach((data) => {
+        if (data.label === "all") {
+          data.click = true;
+        }
+      });
+    });
 
     return {
       DishData,
-      optionsData,
+      OptionsData,
+      orderList,
+      filteredList,
+      showOrderPage,
+      showText,
+      showElement,
       ClickOptions,
+      ClickDish,
     };
   },
 };
@@ -81,6 +132,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 .title {
   color: #f0c42d;
@@ -102,6 +154,16 @@ export default {
   border-radius: 20px;
   margin: 10px;
   padding: 10px;
+  transition: all 0.3s ease;
+}
+.option:hover {
+  color: #ffffff;
+  background-color: #f0c42d;
+  cursor: pointer;
+}
+.active {
+  color: #ffffff;
+  background-color: #f0c42d;
 }
 .dish-box-frame {
   width: 90%;
@@ -122,6 +184,11 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  transition: all 0.3s ease;
+}
+.dish-frame:hover {
+  cursor: pointer;
+  transform: scale(1.05);
 }
 .dish-frame img {
   width: 250px;
@@ -138,5 +205,63 @@ export default {
 }
 .dish-price {
   color: #f0c42d;
+}
+
+.order-page {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 1s ease;
+}
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.slide-enter-to,
+.slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 1s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+.slide-order-enter-active,
+.slide-order-leave-active {
+  transition: all 1s ease;
+}
+.slide-order-enter-from,
+.slide-order-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -50%) translateY(20px);
+}
+.slide-order-enter-to,
+.slide-order-leave-from {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0);
 }
 </style>
