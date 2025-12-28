@@ -1,0 +1,42 @@
+[
+    {
+      "name": "全部",
+      "label": "all",
+      "click": false
+    },
+    {
+      "name": "飯食",
+      "label": "rice",
+      "click": false
+    },
+    {
+      "name": "麵食",
+      "label": "noodle",
+      "click": false
+    },
+    {
+      "name": "肉類",
+      "label": "meat",
+      "click": false
+    },
+    {
+      "name": "湯品",
+      "label": "soup",
+      "click": false
+    },
+    {
+      "name": "沙拉",
+      "label": "salad",
+      "click": false
+    },
+    {
+      "name": "飲料",
+      "label": "drink",
+      "click": false
+    },
+    {
+      "name": "甜點",
+      "label": "deserts",
+      "click": false
+    }
+]
