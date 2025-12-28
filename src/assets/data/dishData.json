@@ -1,9 +1,170 @@
 [
     {
+        "name": "泰式綠咖哩飯",
+        "description": "香濃泰式綠咖哩搭配嫩滑雞肉與新鮮蔬菜，配上香噴噴的白飯，帶來濃郁的異國風味。",
+        "price": 320,
+        "image": "/images/rice/泰式綠咖哩飯.jpg",
+        "category": "rice"
+    },
+    {
+        "name": "紫高麗菜燉飯",
+        "description": "色彩繽紛的紫高麗菜燉飯，搭配濃郁奶油醬汁與香濃起司，帶來獨特的口感與風味。",
+        "price": 260,
+        "image": "/images/rice/紫高麗菜燉飯.jpg",
+        "category": "rice"
+    },
+    {
+        "name": "義式海鮮燉飯",
+        "description": "豐富海鮮搭配香濃番茄醬汁與義式香料，帶來鮮美滋味的義式海鮮燉飯。",
+        "price": 380,
+        "image": "/images/rice/義式海鮮燉飯.jpg",
+        "category": "rice"
+    },
+    {
+        "name": "起司海鮮焗烤",
+        "description": "濃郁起司搭配新鮮海鮮與香料，焗烤至金黃酥脆，帶來豐富口感的美味享受。",
+        "price": 360,
+        "image": "/images/rice/起司海鮮焗烤.jpg",
+        "category": "rice"
+    },
+    {
+        "name": "香菇燉飯",
+        "description": "香菇的濃郁香氣與奶油醬汁完美結合，帶來滑順口感的美味燉飯。",
+        "price": 260,
+        "image": "/images/rice/香菇燉飯.jpg",
+        "category": "rice"
+    },
+    {
+        "name": "奶油培根義大利麵",
+        "description": "經典義大利麵搭配香濃奶油醬與酥脆培根，口感豐富，令人回味無窮。",
+        "price": 320,
+        "image": "/images/noodles/奶油培根義大利麵.jpg",
+        "category": "noodle"
+    },
+    {
+        "name": "奶油白醬義大利麵",
+        "description": "滑順奶油白醬義大利麵，融合濃郁奶香與細緻口感，是一道令人難以抗拒的美味選擇。",
+        "price": 300,
+        "image": "/images/noodles/奶油白醬義大利麵.jpg",
+        "category": "noodle"
+    },
+    {
+        "name": "茄汁肉醬寬扁麵",
+        "description": "經典茄汁肉醬寬扁麵，搭配香濃肉醬與新鮮番茄，帶來豐富的口感與美味享受。",
+        "price": 320,
+        "image": "/images/noodles/茄汁肉醬寬扁麵.jpg",
+        "category": "noodle"
+    },
+    {
+        "name": "青醬寬管義大利麵",
+        "description": "清新羅勒青醬搭配寬管義大利麵，帶來濃郁香氣與獨特風味的完美結合。",
+        "price": 280,
+        "image": "/images/noodles/青醬寬管義大利麵.jpg",
+        "category": "noodle"
+    },
+    {
+        "name": "青醬貝殼義大利麵",
+        "description": "鮮美貝殼義大利麵搭配香濃羅勒青醬，帶來清新爽口的味覺享受。",
+        "price": 280,
+        "image": "/images/noodles/青醬貝殼義大利麵.jpg",
+        "category": "noodle"
+    },
+    {
+        "name": "碳烤豬肋排",
+        "description": "經典美式碳烤豬肋排，外層醬香濃郁，肉質鮮嫩多汁，搭配烤玉米和薯條，是一道令人垂涎的主菜。",
+        "price": 420,
+        "image": "/images/meat/碳烤豬肋排.jpg",
+        "category": "meat"
+    },
+    {
+        "name": "香煎牛排佐松露奶油",
+        "description": "精選牛排經過香煎，搭配濃郁的松露奶油醬，帶來奢華的口感享受。",
+        "price": 580,
+        "image": "/images/meat/香煎牛排佐松露奶油.jpg",
+        "category": "meat"
+    },
+    {
+        "name": "香煎牛排佐香蒜奶油",
+        "description": "嫩煎牛排搭配香蒜奶油醬，風味濃郁，肉質鮮美，是肉食愛好者的絕佳選擇。",
+        "price": 460,
+        "image": "/images/meat/香煎牛排佐香蒜奶油.jpg",
+        "category": "meat"
+    },
+    {
+        "name": "香煎牛排佐黑胡椒",
+        "description": "經典香煎牛排搭配濃郁黑胡椒醬，帶來微辣的口感與豐富的風味。",
+        "price": 420,
+        "image": "/images/meat/香煎牛排佐黑胡椒.jpg",
+        "category": "meat"
+    },
+    {
+        "name": "奶油濃湯",
+        "description": "濃郁滑順的奶油濃湯，採用新鮮食材熬製而成，帶來溫暖舒適的味覺享受。",
+        "price": 220,
+        "image": "/images/soup/奶油濃湯.jpg",
+        "category": "soup"
+    },
+    {
+        "name": "奶油蔬菜濃湯",
+        "description": "豐富蔬菜與濃郁奶油完美結合，帶來滑順口感與營養滿分的美味湯品。",
+        "price": 250,
+        "image": "/images/soup/奶油蔬菜濃湯.jpg",
+        "category": "soup"
+    },
+    {
+        "name": "番茄海鮮清湯",
+        "description": "新鮮番茄與多種海鮮熬製而成的清湯，酸甜開胃，帶來清爽的味覺享受。",
+        "price": 320,
+        "image": "/images/soup/番茄海鮮清湯.jpg",
+        "category": "soup"
+    },
+    {
+        "name": "無花果沙拉",
+        "description": "新鮮無花果搭配多種蔬菜與堅果，淋上特製醬汁，帶來清爽健康的美味享受。",
+        "price": 380,
+        "image": "/images/salad/無花果沙拉.jpg",
+        "category": "salad"
+    },
+    {
+        "name": "牛排沙拉",
+        "description": "嫩煎牛排搭配新鮮蔬菜與特製醬汁，帶來豐富口感與營養的沙拉選擇。",
+        "price": 450,
+        "image": "/images/salad/牛排沙拉.jpg",
+        "category": "salad"
+    },
+    {
+        "name": "雞蛋豆干沙拉",
+        "description": "營養豐富的雞蛋與豆干搭配新鮮蔬菜，淋上特製醬汁，帶來清爽健康的美味享受。",
+        "price": 420,
+        "image": "/images/salad/雞蛋豆干沙拉.jpg",
+        "category": "salad"
+    },
+    {
         "name": "凍檸茶",
         "price": 120,
         "description": "經典港式飲品，清涼解渴的凍檸茶，融合了濃郁的紅茶與新鮮檸檬汁，帶來獨特的酸甜口感。",
         "image": "/images/drinks/凍檸茶.jpg",
+        "category": "drink"
+    },
+    {
+        "name": "土耳其咖啡",
+        "price": 180,
+        "description": "濃郁香醇的土耳其咖啡，採用細磨咖啡豆與香料慢煮而成，帶來獨特的風味與口感。",
+        "image": "/images/drinks/土耳其咖啡.jpg",
+        "category": "drink"
+    },
+    {
+        "name": "檸檬茶",
+        "price": 150,
+        "description": "清新爽口的檸檬茶，融合了濃郁的紅茶與新鮮檸檬汁，帶來獨特的酸甜口感。",
+        "image": "/images/drinks/檸檬茶.jpg",
+        "category": "drink"
+    },
+    {
+        "name": "鮮奶油可可",
+        "price": 200,
+        "description": "濃郁香甜的鮮奶油可可，搭配綿密的鮮奶油，帶來溫暖舒適的享受。",
+        "image": "/images/drinks/鮮奶油可可.jpg",
         "category": "drink"
     },
     {
