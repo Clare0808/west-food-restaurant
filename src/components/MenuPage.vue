@@ -39,7 +39,7 @@
       @click="showOrderPage = false"
     ></div>
     <transition name="slide-order">
-      <OrderDishPage class="order-page" v-show="showOrderPage" />
+      <OrderDish class="order-page" v-show="showOrderPage" />
     </transition>
   </div>
 </template>
@@ -48,14 +48,14 @@
 import { ref, onMounted } from "vue";
 import DishData from "../assets/data/dishData.json";
 import OptionsData from "../assets/data/optionsData.json";
-import OrderDishPage from "./OrderDishPage.vue";
+import OrderDish from "./OrderDish.vue";
 
 export const orderList = ref({});
 
 export default {
   name: "MenuPage",
   components: {
-    OrderDishPage,
+    OrderDish,
   },
   setup() {
     const filteredList = ref([]);
