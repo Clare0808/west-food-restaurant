@@ -49,6 +49,7 @@ import { ref, onMounted } from "vue";
 import DishData from "../assets/data/dishData.json";
 import OptionsData from "../assets/data/optionsData.json";
 import OrderDish from "./OrderDish.vue";
+import { dishAmount } from "../components/OrderDish.vue";
 
 export const orderList = ref({});
 
@@ -95,6 +96,8 @@ export default {
       orderList.value.description = data.description;
       orderList.value.price = data.price;
       orderList.value.image = data.image;
+
+      dishAmount.value = 1;
     };
 
     onMounted(() => {
