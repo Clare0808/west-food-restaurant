@@ -1,43 +1,53 @@
 <template>
   <div class="cart-page">
-    <div class="title">購物車</div>
-    <div class="box-frame" v-for="i in 5" :key="i">
-      <div class="dish-box">
-        <img src="../assets/images/homepage3.png" />
-        <div class="info-frame">
-          <div class="dish-info">
-            <div class="dish-name">招牌牛肉麵</div>
-            <div class="num-frame">
-              <div class="num-btn" @click="CountDishAmount('-')">-</div>
-              <div class="dish-amount">x{{ dishAmount }}</div>
-              <div class="num-btn" @click="CountDishAmount('+')">+</div>
+    <transition name="fade">
+      <div class="title" v-if="showFade">購物車</div>
+    </transition>
+    <transition name="slide">
+      <div class="box-frame" v-if="showSlide">
+        <div class="dish-box-outframe" v-for="i in 5" :key="i">
+          <div class="dish-box">
+            <img src="../assets/images/homepage3.png" />
+            <div class="info-frame">
+              <div class="dish-info">
+                <div class="dish-name">招牌牛肉麵</div>
+                <div class="num-frame">
+                  <div class="num-btn" @click="CountDishAmount('-')">-</div>
+                  <div class="dish-amount">x{{ dishAmount }}</div>
+                  <div class="num-btn" @click="CountDishAmount('+')">+</div>
+                </div>
+              </div>
+              <div class="dish-total-price">$450</div>
+            </div>
+            <div class="btn-frame">
+              <input class="checkbox" type="checkbox" />
+              <div class="cancel-btn">X</div>
             </div>
           </div>
-          <div class="dish-total-price">$450</div>
-        </div>
-        <div class="btn-frame">
-          <input class="checkbox" type="checkbox" />
-          <div class="cancel-btn">X</div>
         </div>
       </div>
-    </div>
-    <div class="check-frame">
-      <div class="total-price">
-        <span style="color: #272727">總計: </span>
-        $1350
+    </transition>
+    <transition name="fade">
+      <div class="check-frame" v-if="showFade">
+        <div class="total-price">
+          <span style="color: #272727">總計: </span>
+          $1350
+        </div>
+        <div class="checkout-btn">結帳</div>
       </div>
-      <div class="checkout-btn">結帳</div>
-    </div>
+    </transition>
   </div>
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 export default {
   name: "CartPage",
   setup() {
     const dishAmount = ref(3);
+    const showFade = ref(false);
+    const showSlide = ref(false);
 
     const CountDishAmount = (operator) => {
       if (operator === "+") {
@@ -47,8 +57,15 @@ export default {
       }
     };
 
+    onMounted(() => {
+      showFade.value = true;
+      showSlide.value = true;
+    });
+
     return {
       dishAmount,
+      showFade,
+      showSlide,
       CountDishAmount,
     };
   },
@@ -70,7 +87,8 @@ export default {
   font-weight: bold;
   margin: 20px 0;
 }
-.box-frame {
+.box-frame,
+.dish-box-outframe {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -194,5 +212,32 @@ img {
   background-color: #ffea9d;
   cursor: pointer;
   transform: scale(1.1);
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 1s ease;
+}
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.slide-enter-to,
+.slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 1s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
 }
 </style>

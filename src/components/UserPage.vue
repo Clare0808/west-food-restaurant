@@ -1,62 +1,82 @@
 <template>
   <div class="user-page">
-    <div class="title">使用者中心</div>
-    <div class="info-frame">
-      <div class="user-info-frame">
-        <div class="img-frame">
-          <img src="@/assets/images/user.jpg" />
-          <i class="fa-solid fa-pencil" id="pencil"></i>
+    <transition name="fade">
+      <div class="title" v-if="showFade">使用者中心</div>
+    </transition>
+    <transition name="slide">
+      <div class="info-frame" v-if="showSlide">
+        <div class="user-info-frame">
+          <div class="img-frame">
+            <img src="@/assets/images/user.jpg" />
+            <i class="fa-solid fa-pencil" id="pencil"></i>
+          </div>
+          <div class="user-info">
+            王小名 先生
+            <i class="fa-solid fa-pencil"></i>
+          </div>
+          <div class="user-info">66 點</div>
         </div>
-        <div class="user-info">
-          王小名 先生
-          <i class="fa-solid fa-pencil"></i>
-        </div>
-        <div class="user-info">66 點</div>
-      </div>
-      <div class="text-frame">
-        <div class="func-outframe">
-          <div class="func-frame">
-            <div class="sec-title">點數紀錄</div>
-            <div class="point-outframe">
-              <div v-for="i in 10" :key="i">
-                <div class="point-frame">
-                  <div class="point-date">2025-10-20</div>
-                  <div class="point-info-frame">
-                    <div class="point-info">消費金額 $175</div>
-                    <div class="point-amount">+5點</div>
+        <div class="text-frame">
+          <div class="func-outframe">
+            <div class="func-frame">
+              <div class="sec-title">點數紀錄</div>
+              <div class="point-outframe">
+                <div v-for="i in 10" :key="i">
+                  <div class="point-frame">
+                    <div class="point-date">2025-10-20</div>
+                    <div class="point-info-frame">
+                      <div class="point-info">消費金額 $175</div>
+                      <div class="point-amount">+5點</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="func-frame">
+              <div class="sec-title">訂餐紀錄</div>
+              <div class="order-outframe">
+                <div v-for="i in 5" :key="i">
+                  <div class="order-frame">
+                    <div class="order-date">2025-10-20 11:20</div>
+                    <div class="order-info">
+                      <div class="order-dish">雞腿便當</div>
+                      <div class="order-amount">x3</div>
+                    </div>
+                    <div class="order-info">
+                      <div class="order-dish">牛肉湯</div>
+                      <div class="order-amount">x2</div>
+                    </div>
+                    <div class="order-price">$375</div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="func-frame">
-            <div class="sec-title">訂餐紀錄</div>
-            <div class="order-outframe">
-              <div v-for="i in 5" :key="i">
-                <div class="order-frame">
-                  <div class="order-date">2025-10-20 11:20</div>
-                  <div class="order-info">
-                    <div class="order-dish">雞腿便當</div>
-                    <div class="order-amount">x3</div>
-                  </div>
-                  <div class="order-info">
-                    <div class="order-dish">牛肉湯</div>
-                    <div class="order-amount">x2</div>
-                  </div>
-                  <div class="order-price">$375</div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
 <script>
+import { ref, onMounted } from "vue";
+
 export default {
   name: "UserPage",
+  setup() {
+    const showFade = ref(false);
+    const showSlide = ref(false);
+
+    onMounted(() => {
+      showFade.value = true;
+      showSlide.value = true;
+    });
+
+    return {
+      showFade,
+      showSlide,
+    };
+  },
 };
 </script>
 
@@ -178,5 +198,32 @@ img {
 }
 .order-price {
   text-align: end;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 1s ease;
+}
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.slide-enter-to,
+.slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 1s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
 }
 </style>
