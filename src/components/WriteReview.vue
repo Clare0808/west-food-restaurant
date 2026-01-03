@@ -117,6 +117,8 @@ export default {
 }
 textarea {
   width: calc(100% - 20px);
+  font-size: 20px;
+  font-family: "Brush Script MT", cursive;
   margin-top: 10px;
   height: 150px;
   padding: 10px;
