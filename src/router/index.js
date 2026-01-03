@@ -4,6 +4,7 @@ import MenuPage from "../components/MenuPage.vue";
 import ReviewPage from "../components/ReviewPage.vue";
 import CartPage from "../components/CartPage.vue";
 import UserPage from "../components/UserPage.vue";
+import LoginPage from "../components/LoginPage.vue";
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: "/user",
     name: "UserPage",
     component: UserPage,
+  },
+  {
+    path: "/login",
+    name: "LoginPage",
+    component: LoginPage,
   },
 ];
 

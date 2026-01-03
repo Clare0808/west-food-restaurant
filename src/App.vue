@@ -14,7 +14,7 @@
       <router-link to="/user">
         <i class="fa-solid fa-user"></i>
       </router-link>
-      <router-link to="/logout">
+      <router-link to="/login">
         <i class="fa-solid fa-arrow-right-from-bracket"></i>
       </router-link>
     </div>
