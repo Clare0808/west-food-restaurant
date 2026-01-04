@@ -7,7 +7,7 @@
       <router-link to="/review">評論</router-link>
       <router-link to="/contact">客服中心</router-link>
     </div>
-    <div class="icon-frame">
+    <div class="icon-frame" v-show="loginStatus">
       <router-link to="/cart">
         <i class="fa-solid fa-cart-shopping"></i>
       </router-link>
@@ -18,12 +18,16 @@
         <i class="fa-solid fa-arrow-right-from-bracket"></i>
       </router-link>
     </div>
+    <router-link to="/login" class="login-btn" v-show="!loginStatus"
+      >登入/註冊
+    </router-link>
   </nav>
   <router-view />
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
+import { loginStatus } from "./components/LoginPage.vue";
 
 export default {
   setup() {
@@ -36,6 +40,7 @@ export default {
     });
 
     return {
+      loginStatus,
       showText,
       showImage,
     };
@@ -99,6 +104,24 @@ nav {
 }
 .icon-frame i:hover {
   color: #f0c42d;
+  transform: scale(1.1);
+}
+.login-btn {
+  width: 120px;
+  height: 40px;
+  color: #ffffff;
+  font-size: 20px;
+  text-align: center;
+  line-height: 40px;
+  background-color: #f0c42d;
+  border-radius: 20px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+.login-btn:hover {
+  color: #272727;
+  background-color: #ffea9d;
+  cursor: pointer;
   transform: scale(1.1);
 }
 </style>
