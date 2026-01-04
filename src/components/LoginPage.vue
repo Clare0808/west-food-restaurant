@@ -55,6 +55,7 @@ import ErrorMessage from "./ErrorMessage.vue";
 
 export const errorText = ref("");
 export const errorType = ref(false);
+export const loginStatus = ref(false);
 
 export default {
   name: "LoginPage",
@@ -80,22 +81,24 @@ export default {
       CleanInput();
     };
 
-    const ClickLogin = () => {
+    const ClickLogin = async () => {
       ExamInputFrame();
 
-      showError.value = true;
-
       if (!errorType.value) {
-        errorText.value = "登入成功!";
+        await CheckLoginData();
 
-        console.log(email.value);
-        console.log(password.value);
+        if (!errorType.value) {
+          errorText.value = "登入成功!";
+          showError.value = true;
 
-        CleanInput();
+          CleanInput();
 
-        setTimeout(() => {
-          router.push("/");
-        }, 2000);
+          setTimeout(() => {
+            router.push("/");
+
+            loginStatus.value = true;
+          }, 2000);
+        }
       }
 
       setTimeout(() => {
@@ -103,27 +106,38 @@ export default {
       }, 2000);
     };
 
-    const ClickSignUp = () => {
+    const ClickSignUp = async () => {
       ExamInputFrame();
 
-      showError.value = true;
-
       if (!errorType.value) {
-        errorText.value = "註冊成功!";
+        await ExamEmail();
 
-        fetch(
-          `http://localhost:3000/signup?email=${email.value}&password=${password.value}`
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            console.log(data);
+        if (!errorType.value) {
+          errorText.value = "註冊成功!";
+          showError.value = true;
+
+          const response = await fetch(`http://localhost:3000/api/signup`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: email.value,
+              name: name.value,
+              password: password.value,
+            }),
           });
 
-        CleanInput();
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
 
-        setTimeout(() => {
-          ClickChangeType();
-        }, 2000);
+          CleanInput();
+
+          setTimeout(() => {
+            ClickChangeType();
+          }, 2000);
+        }
       }
 
       setTimeout(() => {
@@ -140,6 +154,7 @@ export default {
 
     const ExamInputFrame = () => {
       errorType.value = true;
+      showError.value = true;
 
       if (email.value === "") {
         errorText.value = "請輸入E-mail!";
@@ -153,7 +168,59 @@ export default {
         errorText.value = "密碼與確認密碼不相符!";
       } else {
         errorType.value = false;
+        showError.value = false;
       }
+    };
+
+    const ExamEmail = async () => {
+      const response = await fetch(`http://localhost:3000/api/send-data`);
+      const data = await response.json();
+
+      for (const item of data) {
+        if (item.email === email.value) {
+          errorText.value = "該E-mail已存在!";
+          errorType.value = true;
+          showError.value = true;
+
+          return;
+        }
+      }
+
+      errorType.value = false;
+      showError.value = false;
+    };
+
+    const CheckLoginData = async () => {
+      const response = await fetch(`http://localhost:3000/api/send-data`);
+      const data = await response.json();
+
+      let found = false;
+
+      for (const item of data) {
+        if (item.email === email.value) {
+          found = true;
+
+          if (item.password === password.value) {
+            errorType.value = false;
+          } else {
+            errorText.value = "密碼錯誤!";
+            errorType.value = true;
+            showError.value = true;
+          }
+          return;
+        }
+      }
+
+      if (!found) {
+        errorText.value = "該E-mail不存在!";
+        errorType.value = true;
+        showError.value = true;
+
+        return;
+      }
+
+      errorType.value = false;
+      showError.value = false;
     };
 
     onMounted(() => {
@@ -163,6 +230,7 @@ export default {
     return {
       errorText,
       errorType,
+      loginStatus,
       showLogin,
       showSignUp,
       showError,
@@ -175,6 +243,8 @@ export default {
       ClickSignUp,
       CleanInput,
       ExamInputFrame,
+      ExamEmail,
+      CheckLoginData,
     };
   },
 };
