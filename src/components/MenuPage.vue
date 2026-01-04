@@ -47,7 +47,7 @@
 <script>
 import { ref, onMounted } from "vue";
 import DishData from "../assets/data/dishData.json";
-import OptionsData from "../assets/data/optionsData.json";
+import OptionsDataRaw from "../assets/data/optionsData.json";
 import OrderDish from "./OrderDish.vue";
 import { dishAmount } from "../components/OrderDish.vue";
 
@@ -63,6 +63,7 @@ export default {
     const showOrderPage = ref(false);
     const showText = ref(false);
     const showElement = ref(false);
+    const OptionsData = ref(OptionsDataRaw); // 修正成 reactive 狀態
 
     const ClickOptions = (opt) => {
       filteredList.value = DishData.filter((data) => {
@@ -71,7 +72,7 @@ export default {
 
       opt.click = true;
 
-      OptionsData.forEach((data) => {
+      OptionsData.value.forEach((data) => {
         if (data.label !== opt.label) {
           data.click = false;
         }
@@ -81,7 +82,7 @@ export default {
         filteredList.value = DishData;
         opt.click = true;
 
-        OptionsData.forEach((data) => {
+        OptionsData.value.forEach((data) => {
           if (data.label !== "all") {
             data.click = false;
           }
@@ -106,7 +107,7 @@ export default {
 
       filteredList.value = DishData;
 
-      OptionsData.forEach((data) => {
+      OptionsData.value.forEach((data) => {
         if (data.label === "all") {
           data.click = true;
         }
@@ -115,6 +116,7 @@ export default {
 
     return {
       DishData,
+      OptionsDataRaw,
       OptionsData,
       orderList,
       filteredList,
