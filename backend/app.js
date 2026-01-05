@@ -13,8 +13,11 @@ mongoose.connect(process.env.MONGO_URL)
 app.use(cors())
 app.use(express.json())
 
-const authRoutes = require("./api/login")
-app.use("/api", authRoutes)
+const loginRoutes = require("./api/login")
+app.use("/api", loginRoutes)
+
+const orderRoutes = require("./api/order")
+app.use("/api", orderRoutes)
 
 app.listen(3000, () => {
   console.log("Backend running on http://localhost:3000")
