@@ -1,26 +1,42 @@
 <template>
   <div class="cart-page">
+    <transition name="x-slide">
+      <ErrorMessage class="error-msg" v-show="showErrorMsg" />
+    </transition>
     <transition name="fade">
       <div class="title" v-if="showFade">購物車</div>
     </transition>
     <transition name="slide">
       <div class="box-frame" v-if="showSlide">
-        <div class="dish-box-outframe" v-for="i in 5" :key="i">
+        <div
+          class="dish-box-outframe"
+          v-for="(order, index) in filteredData"
+          :key="order"
+        >
           <div class="dish-box">
-            <img src="../assets/images/homepage3.png" />
+            <img :src="order.image" />
             <div class="info-frame">
               <div class="dish-info">
-                <div class="dish-name">招牌牛肉麵</div>
+                <div class="dish-name">{{ order.name }}</div>
                 <div class="num-frame">
-                  <div class="num-btn" @click="CountDishAmount('-')">-</div>
-                  <div class="dish-amount">x{{ dishAmount }}</div>
-                  <div class="num-btn" @click="CountDishAmount('+')">+</div>
+                  <div class="num-btn" @click="CountDishAmount('-', index)">
+                    -
+                  </div>
+                  <div class="dish-amount">x{{ order.amount }}</div>
+                  <div class="num-btn" @click="CountDishAmount('+', index)">
+                    +
+                  </div>
                 </div>
               </div>
-              <div class="dish-total-price">$450</div>
+              <div class="dish-total-price">{{ order.total }}</div>
             </div>
             <div class="btn-frame">
-              <input class="checkbox" type="checkbox" />
+              <input
+                class="checkbox"
+                type="checkbox"
+                @click="CalculatePrice(order.check, order.total)"
+                v-model.trim="order.check"
+              />
               <div class="cancel-btn">X</div>
             </div>
           </div>
@@ -31,42 +47,124 @@
       <div class="check-frame" v-if="showFade">
         <div class="total-price">
           <span style="color: #272727">總計: </span>
-          $1350
+          ${{ totalPrice }}
         </div>
-        <div class="checkout-btn">結帳</div>
+        <div class="checkout-btn" @click="ClickBuy">結帳</div>
       </div>
     </transition>
   </div>
+
+  <div class="overlay" v-show="showCheck" @click="showCheck = false"></div>
+  <transition name="slide-check">
+    <CheckOrder class="check-page" v-if="showCheck" />
+  </transition>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
+import CheckOrder from "./CheckOrder.vue";
+import ErrorMessage from "./ErrorMessage.vue";
+import { errorText, errorType } from "../components/LoginPage.vue";
+
+export const buyList = ref({});
 
 export default {
   name: "CartPage",
+  components: {
+    CheckOrder,
+    ErrorMessage,
+  },
   setup() {
-    const dishAmount = ref(3);
+    const dishAmount = ref(0);
     const showFade = ref(false);
     const showSlide = ref(false);
+    const filteredData = ref({});
+    const showCheck = ref(false);
+    const check = ref(false);
+    const showErrorMsg = ref(false);
+    const totalPrice = ref(0);
 
-    const CountDishAmount = (operator) => {
+    const CountDishAmount = (operator, index) => {
+      const order = filteredData.value[index];
+
       if (operator === "+") {
-        dishAmount.value += 1;
-      } else if (operator === "-" && dishAmount.value > 1) {
-        dishAmount.value -= 1;
+        order.amount += 1;
+
+        if (order.check) {
+          totalPrice.value += order.price;
+        }
+      } else if (operator === "-" && order.amount > 1) {
+        order.amount -= 1;
+
+        if (order.check) {
+          totalPrice.value -= order.price;
+        }
+      }
+
+      order.total = order.price * order.amount;
+    };
+
+    const GetOrderData = async () => {
+      const response = await fetch(`http://localhost:3000/api/get-orders`);
+      const data = await response.json();
+
+      const userMail = localStorage.getItem("userEmail");
+
+      filteredData.value = data.filter((order) => order.email === userMail);
+
+      console.log(filteredData.value);
+    };
+
+    const ClickBuy = () => {
+      buyList.value = filteredData.value.filter(
+        (order) => order.check === true
+      );
+
+      if (buyList.value.length === 0) {
+        errorText.value = "請選擇商品進行結帳!";
+        errorType.value = true;
+
+        showErrorMsg.value = true;
+
+        setTimeout(() => {
+          showErrorMsg.value = false;
+        }, 2000);
+      } else {
+        showCheck.value = true;
       }
     };
 
-    onMounted(() => {
+    const CalculatePrice = (check, price) => {
+      if (check) {
+        totalPrice.value -= price;
+      } else {
+        totalPrice.value += price;
+      }
+    };
+
+    onMounted(async () => {
       showFade.value = true;
       showSlide.value = true;
+
+      await GetOrderData();
     });
 
     return {
+      errorText,
+      errorType,
       dishAmount,
       showFade,
       showSlide,
+      filteredData,
+      showCheck,
+      check,
+      showErrorMsg,
+      buyList,
+      totalPrice,
       CountDishAmount,
+      GetOrderData,
+      ClickBuy,
+      CalculatePrice,
     };
   },
 };
@@ -80,6 +178,12 @@ export default {
   justify-content: center;
   align-items: center;
   position: relative;
+}
+.error-msg {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
 }
 .title {
   color: #f0c42d;
@@ -186,6 +290,7 @@ img {
   justify-content: end;
   align-items: center;
   position: fixed;
+  bottom: 0;
 }
 .total-price {
   height: 40px;
@@ -214,6 +319,23 @@ img {
   transform: scale(1.1);
 }
 
+.check-page {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
 .slide-enter-active,
 .slide-leave-active {
   transition: all 1s ease;
@@ -239,5 +361,33 @@ img {
 .fade-enter-to,
 .fade-leave-from {
   opacity: 1;
+}
+.slide-check-enter-active,
+.slide-check-leave-active {
+  transition: all 1s ease;
+}
+.slide-check-enter-from,
+.slide-check-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -50%) translateY(20px);
+}
+.slide-check-enter-to,
+.slide-check-leave-from {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0);
+}
+.x-slide-enter-active,
+.x-slide-leave-active {
+  transition: all 1s ease;
+}
+.x-slide-enter-from,
+.x-slide-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.x-slide-enter-to,
+.x-slide-leave-from {
+  opacity: 1;
+  transform: translateX(0);
 }
 </style>
