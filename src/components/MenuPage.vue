@@ -1,5 +1,8 @@
 <template>
   <div class="menu-page">
+    <transition name="x-slide">
+      <ErrorMessage class="error-msg" v-show="showErrorMsg" />
+    </transition>
     <transition name="fade">
       <div class="title" v-if="showText">菜單 Menu</div>
     </transition>
@@ -49,18 +52,21 @@ import { ref, onMounted } from "vue";
 import DishData from "../assets/data/dishData.json";
 import OptionsDataRaw from "../assets/data/optionsData.json";
 import OrderDish from "./OrderDish.vue";
-import { dishAmount } from "../components/OrderDish.vue";
+import { dishAmount, showErrorMsg } from "../components/OrderDish.vue";
+import ErrorMessage from "./ErrorMessage.vue";
+import { errorText, errorType } from "../components/LoginPage.vue";
 
 export const orderList = ref({});
+export const showOrderPage = ref(false);
 
 export default {
   name: "MenuPage",
   components: {
     OrderDish,
+    ErrorMessage,
   },
   setup() {
     const filteredList = ref([]);
-    const showOrderPage = ref(false);
     const showText = ref(false);
     const showElement = ref(false);
     const OptionsData = ref(OptionsDataRaw); // 修正成 reactive 狀態
@@ -118,9 +124,12 @@ export default {
       DishData,
       OptionsDataRaw,
       OptionsData,
+      errorText,
+      errorType,
       orderList,
       filteredList,
       showOrderPage,
+      showErrorMsg,
       showText,
       showElement,
       ClickOptions,
@@ -138,6 +147,12 @@ export default {
   justify-content: center;
   align-items: center;
   position: relative;
+}
+.error-msg {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
 }
 .title {
   color: #f0c42d;
@@ -268,5 +283,19 @@ export default {
 .slide-order-leave-from {
   opacity: 1;
   transform: translate(-50%, -50%) translateY(0);
+}
+.x-slide-enter-active,
+.x-slide-leave-active {
+  transition: all 1s ease;
+}
+.x-slide-enter-from,
+.x-slide-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.x-slide-enter-to,
+.x-slide-leave-from {
+  opacity: 1;
+  transform: translateX(0);
 }
 </style>
