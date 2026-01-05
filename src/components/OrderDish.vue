@@ -13,16 +13,18 @@
         <div class="num-text">{{ dishAmount }}</div>
         <div class="num-btn" @click="CountDishAmount('+')">+</div>
       </div>
-      <div class="btn">加入購物車</div>
+      <div class="btn" @click="AddToCart">加入購物車</div>
     </div>
   </div>
 </template>
 
 <script>
 import { ref } from "vue";
-import { orderList } from "../components/MenuPage.vue";
+import { orderList, showOrderPage } from "../components/MenuPage.vue";
+import { errorText, errorType } from "../components/LoginPage.vue";
 
 export const dishAmount = ref(1);
+export const showErrorMsg = ref(false);
 
 export default {
   setup() {
@@ -34,10 +36,47 @@ export default {
       }
     };
 
+    const AddToCart = async () => {
+      const response = await fetch(`http://localhost:3000/api/send-orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: localStorage.getItem("userEmail"),
+          name: orderList.value.name,
+          amount: dishAmount.value,
+          price: orderList.value.price,
+          image: orderList.value.image,
+          check: false,
+          total: orderList.value.price * dishAmount.value,
+        }),
+      });
+
+      showOrderPage.value = false;
+
+      errorText.value = "已成功加入購物車!";
+      errorType.value = false;
+      showErrorMsg.value = true;
+
+      setTimeout(() => {
+        showErrorMsg.value = false;
+      }, 2000);
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+    };
+
     return {
       orderList,
+      showOrderPage,
+      showErrorMsg,
+      errorText,
+      errorType,
       dishAmount,
       CountDishAmount,
+      AddToCart,
     };
   },
 };
