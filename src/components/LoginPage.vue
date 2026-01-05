@@ -91,6 +91,8 @@ export default {
           errorText.value = "登入成功!";
           showError.value = true;
 
+          localStorage.setItem("userEmail", email.value);
+
           CleanInput();
 
           setTimeout(() => {

@@ -15,7 +15,10 @@
         <i class="fa-solid fa-user"></i>
       </router-link>
       <router-link to="/login">
-        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        <i
+          class="fa-solid fa-arrow-right-from-bracket"
+          @click="HandleLogout"
+        ></i>
       </router-link>
     </div>
     <router-link to="/login" class="login-btn" v-show="!loginStatus"
@@ -34,15 +37,29 @@ export default {
     const showText = ref(false);
     const showImage = ref(false);
 
+    const HandleLogout = () => {
+      localStorage.removeItem("userEmail");
+      loginStatus.value = false;
+    };
+
     onMounted(() => {
       showText.value = true;
       showImage.value = true;
+
+      const loginMail = localStorage.getItem("userEmail");
+
+      if (loginMail) {
+        loginStatus.value = true;
+      } else {
+        loginStatus.value = false;
+      }
     });
 
     return {
       loginStatus,
       showText,
       showImage,
+      HandleLogout,
     };
   },
 };
