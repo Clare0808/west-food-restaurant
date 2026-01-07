@@ -1,5 +1,8 @@
 <template>
   <div class="review-page">
+    <transition name="x-slide">
+      <ErrorMessage class="error-msg" v-show="showErrorMsg" />
+    </transition>
     <transition name="fade">
       <div class="title" v-if="showFade">顧客回饋</div>
     </transition>
@@ -39,18 +42,30 @@
       <WriteReview class="write-review" v-show="showWriteReview" />
     </transition>
   </div>
+
+  <transition name="slide-loader">
+    <LoadingEle v-if="showLoader" />
+  </transition>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
 import WriteReview from "./WriteReview.vue";
-
-export const showWriteReview = ref(false);
+import { errorText, errorType } from "../components/LoginPage.vue";
+import {
+  showErrorMsg,
+  showWriteReview,
+  showLoader,
+} from "../components/WriteReview.vue";
+import ErrorMessage from "./ErrorMessage.vue";
+import LoadingEle from "./LoadingEle.vue";
 
 export default {
   name: "ReviewPage",
   components: {
     WriteReview,
+    ErrorMessage,
+    LoadingEle,
   },
   setup() {
     const showSlide = ref(false);
@@ -62,7 +77,11 @@ export default {
     });
 
     return {
+      errorText,
+      errorType,
+      showErrorMsg,
       showWriteReview,
+      showLoader,
       showSlide,
       showFade,
     };
@@ -78,6 +97,12 @@ export default {
   justify-content: center;
   align-items: center;
   position: relative;
+}
+.error-msg {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
 }
 .title {
   color: #f0c42d;
@@ -199,6 +224,34 @@ export default {
 }
 .slide-write-review-enter-to,
 .slide-write-review-leave-from {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0);
+}
+.x-slide-enter-active,
+.x-slide-leave-active {
+  transition: all 1s ease;
+}
+.x-slide-enter-from,
+.x-slide-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.x-slide-enter-to,
+.x-slide-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+}
+.slide-loader-enter-active,
+.slide-loader-leave-active {
+  transition: all 1s ease;
+}
+.slide-loader-enter-from,
+.slide-loader-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -50%) translateY(20px);
+}
+.slide-loader-enter-to,
+.slide-loader-leave-from {
   opacity: 1;
   transform: translate(-50%, -50%) translateY(0);
 }

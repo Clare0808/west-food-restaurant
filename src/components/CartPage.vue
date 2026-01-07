@@ -58,6 +58,10 @@
   <transition name="slide-check">
     <CheckOrder class="check-page" v-if="showCheck" />
   </transition>
+
+  <transition name="slide-check">
+    <LoadingEle v-if="showLoader" />
+  </transition>
 </template>
 
 <script>
@@ -65,6 +69,12 @@ import { ref, onMounted } from "vue";
 import CheckOrder from "./CheckOrder.vue";
 import ErrorMessage from "./ErrorMessage.vue";
 import { errorText, errorType } from "../components/LoginPage.vue";
+import {
+  showErrorMsg,
+  showCheck,
+  showLoader,
+} from "../components/CheckOrder.vue";
+import LoadingEle from "./LoadingEle.vue";
 
 export const buyList = ref({});
 
@@ -73,15 +83,14 @@ export default {
   components: {
     CheckOrder,
     ErrorMessage,
+    LoadingEle,
   },
   setup() {
     const dishAmount = ref(0);
     const showFade = ref(false);
     const showSlide = ref(false);
     const filteredData = ref({});
-    const showCheck = ref(false);
     const check = ref(false);
-    const showErrorMsg = ref(false);
     const totalPrice = ref(0);
 
     const CountDishAmount = (operator, index) => {
@@ -146,19 +155,22 @@ export default {
       showFade.value = true;
       showSlide.value = true;
 
+      showLoader.value = false;
+
       await GetOrderData();
     });
 
     return {
       errorText,
       errorType,
+      showErrorMsg,
+      showCheck,
+      showLoader,
       dishAmount,
       showFade,
       showSlide,
       filteredData,
-      showCheck,
       check,
-      showErrorMsg,
       buyList,
       totalPrice,
       CountDishAmount,
@@ -326,7 +338,8 @@ img {
   transform: translate(-50%, -50%);
   z-index: 2;
 }
-.overlay {
+.overlay,
+.loader-overlay {
   position: fixed;
   top: 0;
   left: 0;
