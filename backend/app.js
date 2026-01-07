@@ -19,6 +19,12 @@ app.use("/api", loginRoutes)
 const orderRoutes = require("./api/order")
 app.use("/api", orderRoutes)
 
+const buyRoutes = require("./api/buy")
+app.use("/api", buyRoutes)
+
+const reviewRoutes = require("./api/review")
+app.use("/api", reviewRoutes)
+
 app.listen(3000, () => {
   console.log("Backend running on http://localhost:3000")
 })

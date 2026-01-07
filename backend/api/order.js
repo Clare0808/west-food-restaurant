@@ -21,4 +21,17 @@ router.get("/get-orders", async (req, res) => {
     res.json(orders)
 })
 
+router.post("/remove-orders", async (req, res) => {
+    const { list } = req.body
+
+    for (let i = 0; i < list.length; i ++) {
+        await Order.findByIdAndDelete(list[i])
+    }
+
+    res.json({
+        success: true,
+        message: "訂單已刪除",
+    })
+})
+
 module.exports = router
