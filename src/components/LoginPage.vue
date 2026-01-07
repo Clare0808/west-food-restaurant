@@ -92,6 +92,7 @@ export default {
           showError.value = true;
 
           localStorage.setItem("userEmail", email.value);
+          localStorage.setItem("userName", name.value);
 
           CleanInput();
 
