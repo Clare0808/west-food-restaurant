@@ -17,23 +17,29 @@
     </div>
     <div class="write-content">
       <div class="sec-title">寫下你的評論吧!</div>
-      <textarea type="text"></textarea>
+      <textarea type="text" v-model.trim="reviewContent"></textarea>
     </div>
     <div class="btn-frame">
       <div class="cancel-btn" @click="showWriteReview = false">取消</div>
-      <div class="submit-btn">提交</div>
+      <div class="submit-btn" @click="SendReview">提交</div>
     </div>
   </div>
 </template>
 
 <script>
 import { ref } from "vue";
-import { showWriteReview } from "../components/ReviewPage.vue";
+import { errorText, errorType } from "../components/LoginPage.vue";
+
+export const showErrorMsg = ref(false);
+export const showWriteReview = ref(false);
+export const showLoader = ref(false);
 
 export default {
   setup() {
     const starTouch = ref(Array(5).fill(false));
     const starClick = ref(0);
+    const reviewContent = ref("");
+    const reviewDate = ref("");
 
     const HandleStarTouch = (index) => {
       for (let i = 0; i < 5; i++) {
@@ -55,13 +61,62 @@ export default {
       }
     };
 
+    const SendReview = async () => {
+      const response = await fetch(`http://localhost:3000/api/send-review`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: localStorage.getItem("userName"),
+          stars: starClick.value,
+          content: reviewContent.value,
+          date: reviewDate.value,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      errorText.value = "已成功送出訂單!";
+      errorType.value = false;
+      showErrorMsg.value = true;
+      showWriteReview.value = false;
+
+      setTimeout(() => {
+        showErrorMsg.value = false;
+
+        showLoader.value = true;
+        window.location.reload();
+      }, 2000);
+    };
+
+    const CreateDate = () => {
+      const date = new Date();
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
+      reviewDate.value = year + "-" + month + "-" + day;
+    };
+
     return {
+      errorText,
+      errorType,
+      showErrorMsg,
       showWriteReview,
+      showLoader,
       starTouch,
       starClick,
+      reviewContent,
+      reviewDate,
       HandleStarTouch,
       HandleStarLeave,
       ClickStart,
+      SendReview,
+      CreateDate,
     };
   },
 };
