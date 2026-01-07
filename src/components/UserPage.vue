@@ -35,18 +35,21 @@
             <div class="func-frame">
               <div class="sec-title">訂餐紀錄</div>
               <div class="order-outframe">
-                <div v-for="i in 5" :key="i">
+                <div v-for="order in filteredData" :key="order">
                   <div class="order-frame">
-                    <div class="order-date">2025-10-20 11:20</div>
-                    <div class="order-info">
-                      <div class="order-dish">雞腿便當</div>
-                      <div class="order-amount">x3</div>
+                    <div class="order-code">{{ order.code }}</div>
+                    <div class="order-date">{{ order.date }}</div>
+                    <div
+                      class="order-info-frame"
+                      v-for="dish in order.list"
+                      :key="dish"
+                    >
+                      <div class="order-info">
+                        <div class="order-dish">{{ dish.name }}</div>
+                        <div class="order-amount">x{{ dish.amount }}</div>
+                      </div>
                     </div>
-                    <div class="order-info">
-                      <div class="order-dish">牛肉湯</div>
-                      <div class="order-amount">x2</div>
-                    </div>
-                    <div class="order-price">$375</div>
+                    <div class="order-price">${{ order.total }}</div>
                   </div>
                 </div>
               </div>
@@ -66,15 +69,31 @@ export default {
   setup() {
     const showFade = ref(false);
     const showSlide = ref(false);
+    const filteredData = ref({});
 
-    onMounted(() => {
+    const GetOrderData = async () => {
+      const response = await fetch(`http://localhost:3000/api/get-buy-orders`);
+      const data = await response.json();
+
+      const userMail = localStorage.getItem("userEmail");
+
+      filteredData.value = data.filter((order) => order.email === userMail);
+
+      console.log(filteredData.value);
+    };
+
+    onMounted(async () => {
       showFade.value = true;
       showSlide.value = true;
+
+      await GetOrderData();
     });
 
     return {
       showFade,
       showSlide,
+      filteredData,
+      GetOrderData,
     };
   },
 };
