@@ -6,6 +6,16 @@
     <transition name="fade">
       <div class="title" v-if="showFade">購物車</div>
     </transition>
+    <div class="top-btn-frame">
+      <div
+        class="all-btn"
+        @click="SelectAll"
+        :class="{ active: selectAllClick }"
+      >
+        全部選取
+      </div>
+      <div class="clean-btn" @click="RemoveAllOrder">一鍵刪除</div>
+    </div>
     <transition name="slide">
       <div class="box-frame" v-if="showSlide">
         <div
@@ -37,7 +47,7 @@
                 @click="CalculatePrice(order.check, order.total)"
                 v-model.trim="order.check"
               />
-              <div class="cancel-btn">X</div>
+              <div class="cancel-btn" @click="RemoveOrder(index)">X</div>
             </div>
           </div>
         </div>
@@ -92,6 +102,7 @@ export default {
     const filteredData = ref({});
     const check = ref(false);
     const totalPrice = ref(0);
+    const selectAllClick = ref(false);
 
     const CountDishAmount = (operator, index) => {
       const order = filteredData.value[index];
@@ -151,6 +162,104 @@ export default {
       }
     };
 
+    const EmpltCart = () => {
+      if (filteredData.value.length === 0) {
+        errorText.value = "購物車是空的!";
+        errorType.value = true;
+
+        showErrorMsg.value = true;
+
+        const cartEle = document.querySelector(".cart-page");
+        cartEle.style.height = "72vh";
+
+        const btnEle = document.querySelector(".clean-btn");
+        btnEle.style.color = "#ffffff";
+        btnEle.style.backgroundColor = "#ffea9d";
+        btnEle.style.cursor = "not-allowed";
+      } else {
+        showErrorMsg.value = false;
+      }
+
+      if (filteredData.value.length === 1) {
+        const cartEle = document.querySelector(".cart-page");
+        cartEle.style.height = "72vh";
+      }
+    };
+
+    const RemoveOrder = async (index) => {
+      const response = await fetch(`http://localhost:3000/api/remove-orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          list: [filteredData.value[index]._id],
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      errorText.value = "餐點刪除成功!";
+      errorType.value = false;
+      showErrorMsg.value = true;
+
+      setTimeout(() => {
+        showErrorMsg.value = false;
+
+        showLoader.value = true;
+        window.location.reload();
+      }, 2000);
+    };
+
+    const RemoveAllOrder = async () => {
+      if (filteredData.value.length === 0) {
+        return;
+      }
+
+      const removeList = filteredData.value.map((item) => item._id);
+
+      const response = await fetch(`http://localhost:3000/api/remove-orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          list: removeList,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      errorText.value = "餐點已全數刪除!";
+      errorType.value = false;
+      showErrorMsg.value = true;
+
+      setTimeout(() => {
+        showErrorMsg.value = false;
+
+        showLoader.value = true;
+        window.location.reload();
+      }, 2000);
+    };
+
+    const SelectAll = () => {
+      selectAllClick.value = !selectAllClick.value;
+
+      if (selectAllClick.value) {
+        for (const item of filteredData.value) {
+          item.check = true;
+        }
+      } else {
+        for (const item of filteredData.value) {
+          item.check = false;
+        }
+      }
+    };
+
     onMounted(async () => {
       showFade.value = true;
       showSlide.value = true;
@@ -158,6 +267,8 @@ export default {
       showLoader.value = false;
 
       await GetOrderData();
+
+      EmpltCart();
     });
 
     return {
@@ -173,10 +284,15 @@ export default {
       check,
       buyList,
       totalPrice,
+      selectAllClick,
       CountDishAmount,
       GetOrderData,
       ClickBuy,
       CalculatePrice,
+      EmpltCart,
+      RemoveOrder,
+      RemoveAllOrder,
+      SelectAll,
     };
   },
 };
@@ -184,16 +300,17 @@ export default {
 
 <style scoped>
 .cart-page {
+  height: 100%;
   padding-bottom: 100px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   position: relative;
 }
 .error-msg {
   position: fixed;
-  top: 20px;
+  top: 80px;
   right: 20px;
   z-index: 2;
 }
@@ -202,6 +319,40 @@ export default {
   font-size: 35px;
   font-weight: bold;
   margin: 20px 0;
+  margin-bottom: 50px;
+}
+.top-btn-frame {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 80px;
+  right: calc(10% - 20px);
+}
+.all-btn,
+.clean-btn {
+  width: 100px;
+  height: 40px;
+  color: #ffffff;
+  font-size: 20px;
+  text-align: center;
+  line-height: 40px;
+  background-color: #f0c42d;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+.all-btn {
+  margin-right: 20px;
+}
+.all-btn:hover,
+.clean-btn:hover {
+  color: #272727;
+  background-color: #ffea9d;
+  cursor: pointer;
+}
+.active {
+  color: #272727;
+  background-color: #ffea9d;
 }
 .box-frame,
 .dish-box-outframe {
@@ -338,8 +489,7 @@ img {
   transform: translate(-50%, -50%);
   z-index: 2;
 }
-.overlay,
-.loader-overlay {
+.overlay {
   position: fixed;
   top: 0;
   left: 0;
