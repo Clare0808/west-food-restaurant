@@ -27,9 +27,15 @@
           <div class="sec-title">E-mail</div>
           <input type="text" v-model.trim="email" />
         </div>
-        <div class="input-frame">
-          <div class="sec-title">名稱</div>
-          <input type="text" v-model.trim="name" />
+        <div class="input-frame-mix">
+          <div class="input-frame">
+            <div class="sec-title">名稱</div>
+            <input type="text" v-model.trim="name" />
+          </div>
+          <div class="input-frame">
+            <div class="sec-title">電話號碼</div>
+            <input type="text" v-model.trim="number" />
+          </div>
         </div>
         <div class="input-frame">
           <div class="sec-title">密碼</div>
@@ -69,6 +75,7 @@ export default {
 
     const email = ref("");
     const name = ref("");
+    const number = ref("");
     const password = ref("");
     const confirmPassword = ref("");
 
@@ -127,6 +134,7 @@ export default {
             body: JSON.stringify({
               email: email.value,
               name: name.value,
+              number: number.value,
               password: password.value,
             }),
           });
@@ -151,6 +159,7 @@ export default {
     const CleanInput = () => {
       email.value = "";
       name.value = "";
+      number.value = "";
       password.value = "";
       confirmPassword.value = "";
     };
@@ -163,6 +172,8 @@ export default {
         errorText.value = "請輸入E-mail!";
       } else if (name.value === "" && showSignUp.value) {
         errorText.value = "請輸入名稱!";
+      } else if (number.value === "" && showSignUp.value) {
+        errorText.value = "請輸入電話號碼!";
       } else if (password.value === "") {
         errorText.value = "請輸入密碼!";
       } else if (confirmPassword.value === "" && showSignUp.value) {
@@ -239,6 +250,7 @@ export default {
       showError,
       email,
       name,
+      number,
       password,
       confirmPassword,
       ClickChangeType,
@@ -295,6 +307,14 @@ export default {
 .input-frame {
   width: 100%;
   margin: 10px 0;
+}
+.input-frame-mix {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, calc(50% - 10px));
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
 }
 .sec-title {
   font-size: 22px;
