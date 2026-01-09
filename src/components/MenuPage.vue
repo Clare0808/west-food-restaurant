@@ -150,7 +150,7 @@ export default {
 }
 .error-msg {
   position: fixed;
-  top: 20px;
+  top: 80px;
   right: 20px;
   z-index: 2;
 }
