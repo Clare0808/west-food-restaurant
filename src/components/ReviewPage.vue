@@ -8,19 +8,19 @@
     </transition>
     <transition name="slide">
       <div class="review-box-frame" v-if="showSlide">
-        <div v-for="i in 5" :key="i">
+        <div v-for="re in reviewData" :key="re">
           <div class="review-box">
             <div class="review-stars">
-              <div v-for="i in 5" :key="i">
+              <div v-for="i in re.stars" :key="i">
                 <i class="fa-solid fa-star"></i>
               </div>
             </div>
-            <div class="review-content">食物非常美味，服務也很周到！</div>
+            <div class="review-content">{{ re.content }}</div>
             <div class="review-author-info">
               <i class="fa-solid fa-user"></i>
               <div class="review-text-frame">
-                <div class="review-author-name">王小明</div>
-                <div class="review-author-date">2024-05-15</div>
+                <div class="review-author-name">{{ re.name }}</div>
+                <div class="review-author-date">{{ re.date }}</div>
               </div>
             </div>
           </div>
@@ -70,10 +70,22 @@ export default {
   setup() {
     const showSlide = ref(false);
     const showFade = ref(false);
+    const reviewData = ref(false);
 
-    onMounted(() => {
+    const GetReview = async () => {
+      const response = await fetch(`http://localhost:3000/api/get-review`);
+      const data = await response.json();
+
+      reviewData.value = data;
+    };
+
+    onMounted(async () => {
       showSlide.value = true;
       showFade.value = true;
+
+      showLoader.value = false;
+
+      await GetReview();
     });
 
     return {
@@ -84,6 +96,8 @@ export default {
       showLoader,
       showSlide,
       showFade,
+      reviewData,
+      GetReview,
     };
   },
 };
@@ -100,7 +114,7 @@ export default {
 }
 .error-msg {
   position: fixed;
-  top: 20px;
+  top: 80px;
   right: 20px;
   z-index: 2;
 }
@@ -112,7 +126,7 @@ export default {
 }
 .review-box-frame {
   display: grid;
-  grid-template-columns: repeat(3, 30%);
+  grid-template-columns: repeat(3, 350px);
   grid-template-rows: auto;
   gap: 20px;
   justify-content: center;
