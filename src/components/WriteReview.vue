@@ -62,6 +62,8 @@ export default {
     };
 
     const SendReview = async () => {
+      CreateDate();
+
       const response = await fetch(`http://localhost:3000/api/send-review`, {
         method: "POST",
         headers: {
@@ -79,7 +81,7 @@ export default {
         throw new Error("Network response was not ok");
       }
 
-      errorText.value = "已成功送出訂單!";
+      errorText.value = "已成功送出評論!";
       errorType.value = false;
       showErrorMsg.value = true;
       showWriteReview.value = false;
