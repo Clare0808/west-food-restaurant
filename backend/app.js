@@ -25,6 +25,9 @@ app.use("/api", buyRoutes)
 const reviewRoutes = require("./api/review")
 app.use("/api", reviewRoutes)
 
+const modifyRoutes = require("./api/modify")
+app.use("/api", modifyRoutes)
+
 app.listen(3000, () => {
   console.log("Backend running on http://localhost:3000")
 })

@@ -1,35 +1,30 @@
 <template>
   <div class="user-page">
+    <transition name="x-slide">
+      <ErrorMessage class="error-msg" v-show="showErrorMsg" />
+    </transition>
     <transition name="fade">
       <div class="title" v-if="showFade">使用者中心</div>
     </transition>
     <transition name="slide">
       <div class="info-frame" v-if="showSlide">
-        <div class="user-info-frame">
-          <div class="img-frame">
-            <img src="@/assets/images/user.jpg" />
-            <i class="fa-solid fa-pencil" id="pencil"></i>
-          </div>
-          <div class="user-info">
-            王小名 先生
-            <i class="fa-solid fa-pencil"></i>
-          </div>
-          <div class="user-info">66 點</div>
-        </div>
         <div class="text-frame">
           <div class="func-outframe">
-            <div class="func-frame">
-              <div class="sec-title">點數紀錄</div>
-              <div class="point-outframe">
-                <div v-for="i in 10" :key="i">
-                  <div class="point-frame">
-                    <div class="point-date">2025-10-20</div>
-                    <div class="point-info-frame">
-                      <div class="point-info">消費金額 $175</div>
-                      <div class="point-amount">+5點</div>
-                    </div>
-                  </div>
-                </div>
+            <div class="user-info-frame">
+              <div class="img-frame">
+                <img src="@/assets/images/user.jpg" />
+                <i class="fa-solid fa-pencil" id="pencil"></i>
+              </div>
+              <div class="user-info">
+                {{ userName }} 您好!
+                <i class="fa-solid fa-pencil" @click="ClickModify('name')"></i>
+              </div>
+              <div class="user-info">
+                {{ userNumber }}
+                <i
+                  class="fa-solid fa-pencil"
+                  @click="ClickModify('number')"
+                ></i>
               </div>
             </div>
             <div class="func-frame">
@@ -59,17 +54,41 @@
       </div>
     </transition>
   </div>
+
+  <div class="overlay" v-show="showModify" @click="showModify = false"></div>
+  <transition name="slide-modify">
+    <ModifyUserInfo class="modify-page" v-if="showModify" />
+  </transition>
+
+  <transition name="slide-loader">
+    <LoadingEle v-if="showLoader" />
+  </transition>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
+import ModifyUserInfo from "./ModifyUserInfo.vue";
+import ErrorMessage from "./ErrorMessage.vue";
+import { errorText, errorType } from "../components/LoginPage.vue";
+import { showErrorMsg, showLoader } from "../components/ModifyUserInfo.vue";
+import LoadingEle from "./LoadingEle.vue";
+
+export const modifyColumn = ref("");
+export const showModify = ref(false);
 
 export default {
   name: "UserPage",
+  components: {
+    ModifyUserInfo,
+    ErrorMessage,
+    LoadingEle,
+  },
   setup() {
     const showFade = ref(false);
     const showSlide = ref(false);
     const filteredData = ref({});
+    const userName = ref("");
+    const userNumber = ref("");
 
     const GetOrderData = async () => {
       const response = await fetch(`http://localhost:3000/api/get-buy-orders`);
@@ -78,8 +97,24 @@ export default {
       const userMail = localStorage.getItem("userEmail");
 
       filteredData.value = data.filter((order) => order.email === userMail);
+    };
 
-      console.log(filteredData.value);
+    const GetUserInfo = async () => {
+      const response = await fetch(`http://localhost:3000/api/send-data`);
+      const data = await response.json();
+
+      const userMail = localStorage.getItem("userEmail");
+
+      userName.value = data.filter((info) => info.email === userMail)[0].name;
+      userNumber.value = data.filter(
+        (info) => info.email === userMail
+      )[0].number;
+    };
+
+    const ClickModify = (type) => {
+      showModify.value = true;
+
+      modifyColumn.value = type;
     };
 
     onMounted(async () => {
@@ -87,13 +122,24 @@ export default {
       showSlide.value = true;
 
       await GetOrderData();
+      await GetUserInfo();
     });
 
     return {
+      errorText,
+      errorType,
+      showErrorMsg,
+      showLoader,
+      modifyColumn,
       showFade,
       showSlide,
       filteredData,
+      userName,
+      userNumber,
+      showModify,
       GetOrderData,
+      GetUserInfo,
+      ClickModify,
     };
   },
 };
@@ -107,6 +153,12 @@ export default {
   justify-content: center;
   align-items: center;
   position: relative;
+}
+.error-msg {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 2;
 }
 .title {
   color: #f0c42d;
@@ -151,7 +203,6 @@ img {
 }
 .user-info-frame {
   font-size: 24px;
-  margin-right: 20px;
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -160,8 +211,8 @@ img {
 }
 .user-info {
   width: 100%;
-  text-align: start;
-  margin: 5px 20px;
+  margin: 10px 0;
+  text-align: center;
 }
 .user-info i {
   color: #f0c42d;
@@ -182,7 +233,7 @@ img {
 .func-outframe {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, calc(50% - 20px));
+  grid-template-columns: 30% 70%;
   gap: 20px;
   justify-content: center;
   align-items: start;
@@ -190,33 +241,46 @@ img {
 .sec-title {
   color: #f0c42d;
   font-size: 22px;
+  margin-bottom: 10px;
 }
-.point-outframe,
 .order-outframe {
   max-height: 350px;
   overflow-y: auto;
 }
-.point-frame,
 .order-frame {
   margin-top: 10px;
   padding: 10px;
 }
-.point-date,
 .order-date {
   color: #9d9d9d;
 }
-.point-info-frame,
 .order-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.point-amount,
 .order-price {
   color: #f0c42d;
 }
 .order-price {
   text-align: end;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+.modify-page {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
 }
 
 .slide-enter-active,
@@ -244,5 +308,47 @@ img {
 .fade-enter-to,
 .fade-leave-from {
   opacity: 1;
+}
+.slide-modify-enter-active,
+.slide-modify-leave-active {
+  transition: all 1s ease;
+}
+.slide-modify-enter-from,
+.slide-modify-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -50%) translateY(20px);
+}
+.slide-modify-enter-to,
+.slide-modify-leave-from {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0);
+}
+.x-slide-enter-active,
+.x-slide-leave-active {
+  transition: all 1s ease;
+}
+.x-slide-enter-from,
+.x-slide-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.x-slide-enter-to,
+.x-slide-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+}
+.slide-loader-enter-active,
+.slide-loader-leave-active {
+  transition: all 1s ease;
+}
+.slide-loader-enter-from,
+.slide-loader-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -50%) translateY(20px);
+}
+.slide-loader-enter-to,
+.slide-loader-leave-from {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0);
 }
 </style>
