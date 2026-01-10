@@ -5,6 +5,9 @@ import ReviewPage from "../components/ReviewPage.vue";
 import CartPage from "../components/CartPage.vue";
 import UserPage from "../components/UserPage.vue";
 import LoginPage from "../components/LoginPage.vue";
+import BackHome from "../components/backstage/HomePage.vue";
+import BackMenu from "../components/backstage/MenuPage.vue";
+import BackOrder from "../components/backstage/OrderPage.vue";
 
 const routes = [
   {
@@ -36,6 +39,23 @@ const routes = [
     path: "/login",
     name: "LoginPage",
     component: LoginPage,
+  },
+  {
+    path: "/back-home",
+    name: "BackHome",
+    component: BackHome,
+    children: [
+      {
+        path: "/back-menu",
+        name: "BackMenu",
+        component: BackMenu,
+      },
+      {
+        path: "/back-order",
+        name: "BackOrder",
+        component: BackOrder,
+      },
+    ],
   },
 ];
 

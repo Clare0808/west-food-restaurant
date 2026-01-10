@@ -26,6 +26,7 @@
                   @click="ClickModify('number')"
                 ></i>
               </div>
+              <div class="btn" @click="ClickBack">進入後台</div>
             </div>
             <div class="func-frame">
               <div class="sec-title">訂餐紀錄</div>
@@ -67,6 +68,7 @@
 
 <script>
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import ModifyUserInfo from "./ModifyUserInfo.vue";
 import ErrorMessage from "./ErrorMessage.vue";
 import { errorText, errorType } from "../components/LoginPage.vue";
@@ -89,6 +91,8 @@ export default {
     const filteredData = ref({});
     const userName = ref("");
     const userNumber = ref("");
+
+    const router = useRouter();
 
     const GetOrderData = async () => {
       const response = await fetch(`http://localhost:3000/api/get-buy-orders`);
@@ -117,6 +121,10 @@ export default {
       modifyColumn.value = type;
     };
 
+    const ClickBack = () => {
+      router.push("/back-home");
+    };
+
     onMounted(async () => {
       showFade.value = true;
       showSlide.value = true;
@@ -140,6 +148,7 @@ export default {
       GetOrderData,
       GetUserInfo,
       ClickModify,
+      ClickBack,
     };
   },
 };
@@ -180,7 +189,7 @@ img {
   width: 200px;
   height: 200px;
   border-bottom: 1px solid #f0c42d;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   padding-bottom: 10px;
 }
 #pencil {
@@ -223,6 +232,23 @@ img {
   color: #272727;
   cursor: pointer;
 }
+.btn {
+  width: 150px;
+  height: 40px;
+  color: #ffffff;
+  background-color: #f0c42d;
+  font-size: 20px;
+  border-radius: 20px;
+  line-height: 40px;
+  text-align: center;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+}
+.btn:hover {
+  color: #272727;
+  background-color: #ffea9d;
+  cursor: pointer;
+}
 .text-frame {
   width: 100%;
   background-color: #ffffff;
@@ -244,7 +270,7 @@ img {
   margin-bottom: 10px;
 }
 .order-outframe {
-  max-height: 350px;
+  max-height: 370px;
   overflow-y: auto;
 }
 .order-frame {
