@@ -47,7 +47,11 @@
                 @click="CalculatePrice(order.check, order.total)"
                 v-model.trim="order.check"
               />
-              <div class="cancel-btn" @click="RemoveOrder(index)">X</div>
+              <i
+                class="fa-solid fa-trash-can"
+                id="cancel-btn"
+                @click="RemoveOrder(index)"
+              ></i>
             </div>
           </div>
         </div>
@@ -436,12 +440,12 @@ img {
   color: #ffffff;
   background-color: #f0c42d;
 }
-.cancel-btn {
+#cancel-btn {
   color: #f0c42d;
   font-size: 26px;
   margin-top: 15px;
 }
-.cancel-btn {
+#cancel-btn:hover {
   cursor: pointer;
 }
 .check-frame {
