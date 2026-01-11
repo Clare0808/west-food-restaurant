@@ -8,6 +8,7 @@ import LoginPage from "../components/LoginPage.vue";
 import BackHome from "../components/backstage/HomePage.vue";
 import BackMenu from "../components/backstage/MenuPage.vue";
 import BackOrder from "../components/backstage/OrderPage.vue";
+import BackReview from "../components/backstage/ReviewPage.vue";
 
 const routes = [
   {
@@ -54,6 +55,11 @@ const routes = [
         path: "/back-order",
         name: "BackOrder",
         component: BackOrder,
+      },
+      {
+        path: "/back-review",
+        name: "BackReview",
+        component: BackReview,
       },
     ],
   },

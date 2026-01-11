@@ -1,18 +1,16 @@
 <template>
   <div class="back-menu">
     <div class="dish-box-outframe">
-      <div class="dish-box-frame" v-for="i in 10" :key="i">
+      <div class="dish-box-frame" v-for="dish in dishList" :key="dish">
         <div class="dish-box">
-          <img src="@/assets/images/homepage4.png" />
+          <img :src="dish.image" />
           <div class="text-outframe">
             <div class="text-frame">
-              <div class="dish-info">無花果沙拉</div>
-              <div class="dish-info">salad</div>
-              <div class="dish-price">$180</div>
+              <div class="dish-info">{{ dish.name }}</div>
+              <div class="dish-info">{{ dish.category }}</div>
+              <div class="dish-price">${{ dish.price }}</div>
             </div>
-            <div class="dish-description">
-              精選牛排經過香煎，搭配濃郁的松露奶油醬，帶來奢華的口感享受。
-            </div>
+            <div class="dish-description">{{ dish.description }}</div>
           </div>
           <div class="btn-frame">
             <i class="fa-solid fa-pencil"></i>
@@ -26,8 +24,23 @@
 </template>
 
 <script>
+import { ref, onMounted } from "vue";
+import DishData from "../../assets/data/dishData.json";
+
 export default {
   name: "BackMenu",
+  setup() {
+    const dishList = ref();
+
+    onMounted(() => {
+      dishList.value = DishData;
+    });
+
+    return {
+      DishData,
+      dishList,
+    };
+  },
 };
 </script>
 

@@ -1,27 +1,31 @@
 <template>
   <div class="back-order">
     <div class="order-box-outframe">
-      <div class="order-box-frame" v-for="i in 10" :key="i">
+      <div class="order-box-frame" v-for="order in orderData" :key="order">
         <div class="order-box">
           <div class="text-outframe">
             <div class="text-frame">
-              <div class="order-info">MM20162010</div>
-              <div class="order-date">2026-01-19 10:20</div>
+              <div class="order-info">{{ order.code }}</div>
+              <div class="order-date">{{ order.date }}</div>
             </div>
             <div class="text-frame">
-              <div class="order-info">王筱寧</div>
-              <div class="order-info">test123@gmail.com</div>
-              <div class="order-info">0912345678</div>
+              <div class="order-info">{{ order.name }}</div>
+              <div class="order-info">{{ order.email }}</div>
+              <div class="order-info">{{ order.phone }}</div>
             </div>
             <div class="order-info-box-outframe">
-              <div class="order-info-box-frame" v-for="i in 2" :key="i">
+              <div
+                class="order-info-box-frame"
+                v-for="list in order.list"
+                :key="list"
+              >
                 <div class="text-frame">
-                  <div class="order-info">碳烤豬肋排</div>
-                  <div class="order-info">x1</div>
+                  <div class="order-info">{{ list.name }}</div>
+                  <div class="order-info">x{{ list.amount }}</div>
                 </div>
               </div>
             </div>
-            <div class="order-price">$180</div>
+            <div class="order-price">${{ order.total }}</div>
           </div>
           <div class="btn-frame">
             <i class="fa-solid fa-pencil"></i>
@@ -34,8 +38,43 @@
 </template>
 
 <script>
+import { ref, onMounted } from "vue";
+
 export default {
   name: "BackOrder",
+  setup() {
+    const orderData = ref({});
+
+    const GetOrderData = async () => {
+      const userMail = localStorage.getItem("userEmail");
+
+      const responseOrder = await fetch(
+        `http://localhost:3000/api/get-buy-orders`
+      );
+      const dataOrder = await responseOrder.json();
+
+      const responseUser = await fetch(`http://localhost:3000/api/send-data`);
+      const dataUser = await responseUser.json();
+
+      orderData.value = dataOrder;
+
+      for (const item of orderData.value) {
+        item.name = dataUser.filter((i) => i.email === userMail)[0].name;
+        item.phone = dataUser.filter((i) => i.email === userMail)[0].number;
+      }
+
+      console.log(orderData.value);
+    };
+
+    onMounted(async () => {
+      await GetOrderData();
+    });
+
+    return {
+      orderData,
+      GetOrderData,
+    };
+  },
 };
 </script>
 

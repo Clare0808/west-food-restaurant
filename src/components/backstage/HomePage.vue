@@ -9,8 +9,8 @@
         <div class="btn-frame">
           <router-link to="/back-menu">上架餐點</router-link>
           <router-link to="/back-order">訂單資訊</router-link>
-          <router-link to="/back-statistic">數據統計</router-link>
           <router-link to="/back-review">客戶評論</router-link>
+          <router-link to="/back-statistic">數據統計</router-link>
           <router-link to="/back-contact">客服聯絡</router-link>
         </div>
         <router-link to="/user" class="store-btn">返回</router-link>
