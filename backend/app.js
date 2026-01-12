@@ -3,6 +3,8 @@ const cors = require("cors")
 
 const app = express()
 
+global.__root = require('path').resolve(__dirname, "..")
+
 const mongoose = require("mongoose")
 require("dotenv").config()
 
@@ -27,6 +29,9 @@ app.use("/api", reviewRoutes)
 
 const modifyRoutes = require("./api/modify")
 app.use("/api", modifyRoutes)
+
+const menuRoutes = require("./api/menu")
+app.use("/api", menuRoutes)
 
 app.listen(3000, () => {
   console.log("Backend running on http://localhost:3000")

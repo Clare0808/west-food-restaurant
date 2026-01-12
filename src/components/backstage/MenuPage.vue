@@ -1,7 +1,11 @@
 <template>
   <div class="back-menu">
     <div class="dish-box-outframe">
-      <div class="dish-box-frame" v-for="dish in dishList" :key="dish">
+      <div
+        class="dish-box-frame"
+        v-for="(dish, index) in dishList"
+        :key="index"
+      >
         <div class="dish-box">
           <img :src="dish.image" />
           <div class="text-outframe">
@@ -14,31 +18,89 @@
           </div>
           <div class="btn-frame">
             <i class="fa-solid fa-pencil"></i>
-            <i class="fa-solid fa-trash-can"></i>
+            <i class="fa-solid fa-trash-can" @click="ShowCheckEle(index)"></i>
           </div>
         </div>
       </div>
       <div class="add-btn">新增餐點 +</div>
     </div>
+
+    <ModifyMenu class="modify-ele" />
+
+    <transition name="x-slide">
+      <ErrorMessage class="error-msg" v-show="showErrorMsg" />
+    </transition>
+
+    <transition name="slide-loader">
+      <LoadingEle v-if="showLoader" />
+    </transition>
+
+    <div
+      class="overlay"
+      v-if="showCheckEle"
+      @click="showCheckEle = false"
+    ></div>
+    <transition name="slide-loader">
+      <CheckEle class="check-ele" v-if="showCheckEle" />
+    </transition>
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
-import DishData from "../../assets/data/dishData.json";
+import ErrorMessage from "../../components/ErrorMessage.vue";
+import { errorText, errorType } from "../../components/LoginPage.vue";
+import LoadingEle from "../../components/LoadingEle.vue";
+import CheckEle from "./CheckEle.vue";
+import {
+  removeData,
+  showCheckEle,
+  showErrorMsg,
+  showLoader,
+} from "../../components/backstage/ReviewPage.vue";
+import ModifyMenu from "./ModifyMenu.vue";
 
 export default {
   name: "BackMenu",
+  components: {
+    ErrorMessage,
+    LoadingEle,
+    CheckEle,
+    ModifyMenu,
+  },
   setup() {
-    const dishList = ref();
+    const dishList = ref([]);
 
-    onMounted(() => {
-      dishList.value = DishData;
+    const GetDishData = async () => {
+      const response = await fetch("/data/dishData.json");
+      const data = await response.json();
+
+      dishList.value = data;
+    };
+
+    const ShowCheckEle = (index) => {
+      showCheckEle.value = true;
+
+      removeData.value.type = "menu";
+      removeData.value.list = [dishList.value[index].id];
+
+      console.log(removeData.value);
+    };
+
+    onMounted(async () => {
+      await GetDishData();
     });
 
     return {
-      DishData,
+      errorText,
+      errorType,
+      removeData,
+      showCheckEle,
+      showErrorMsg,
+      showLoader,
       dishList,
+      GetDishData,
+      ShowCheckEle,
     };
   },
 };
@@ -118,5 +180,66 @@ i:hover {
 .add-btn:hover {
   color: #272727;
   cursor: pointer;
+}
+
+.modify-ele {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.error-msg {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+.check-ele {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.x-slide-enter-active,
+.x-slide-leave-active {
+  transition: all 1s ease;
+}
+.x-slide-enter-from,
+.x-slide-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.x-slide-enter-to,
+.x-slide-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+}
+.slide-loader-enter-active,
+.slide-loader-leave-active {
+  transition: all 1s ease;
+}
+.slide-loader-enter-from,
+.slide-loader-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -50%) translateY(20px);
+}
+.slide-loader-enter-to,
+.slide-loader-leave-from {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0);
 }
 </style>

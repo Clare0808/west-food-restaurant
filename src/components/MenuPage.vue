@@ -49,7 +49,6 @@
 
 <script>
 import { ref, onMounted } from "vue";
-import DishData from "../assets/data/dishData.json";
 import OptionsDataRaw from "../assets/data/optionsData.json";
 import OrderDish from "./OrderDish.vue";
 import { dishAmount, showErrorMsg } from "../components/OrderDish.vue";
@@ -66,13 +65,21 @@ export default {
     ErrorMessage,
   },
   setup() {
+    const dishList = ref([]);
     const filteredList = ref([]);
     const showText = ref(false);
     const showElement = ref(false);
     const OptionsData = ref(OptionsDataRaw); // 修正成 reactive 狀態
 
+    const GetDishData = async () => {
+      const response = await fetch("/data/dishData.json");
+      const data = await response.json();
+
+      dishList.value = data;
+    };
+
     const ClickOptions = (opt) => {
-      filteredList.value = DishData.filter((data) => {
+      filteredList.value = dishList.value.filter((data) => {
         return data.category === opt.label;
       });
 
@@ -85,7 +92,7 @@ export default {
       });
 
       if (opt.label === "all") {
-        filteredList.value = DishData;
+        filteredList.value = dishList.value;
         opt.click = true;
 
         OptionsData.value.forEach((data) => {
@@ -107,11 +114,13 @@ export default {
       dishAmount.value = 1;
     };
 
-    onMounted(() => {
+    onMounted(async () => {
       showText.value = true;
       showElement.value = true;
 
-      filteredList.value = DishData;
+      await GetDishData();
+
+      filteredList.value = dishList.value;
 
       OptionsData.value.forEach((data) => {
         if (data.label === "all") {
@@ -121,12 +130,12 @@ export default {
     });
 
     return {
-      DishData,
       OptionsDataRaw,
       OptionsData,
       errorText,
       errorType,
       orderList,
+      dishList,
       filteredList,
       showOrderPage,
       showErrorMsg,
