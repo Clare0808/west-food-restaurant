@@ -21,4 +21,17 @@ router.post("/send-review", async (req, res) => {
     })
 })
 
+router.post("/remove-review", async (req, res) => {
+    const { list } = req.body
+
+    for (let i = 0; i < list.length; i ++) {
+        await Review.findByIdAndDelete(list[i])
+    }
+
+    res.json({
+        success: true,
+        message: "評論已刪除",
+    })
+})
+
 module.exports = router
