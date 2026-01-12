@@ -1,7 +1,11 @@
 <template>
   <div class="back-order">
     <div class="order-box-outframe">
-      <div class="order-box-frame" v-for="order in orderData" :key="order">
+      <div
+        class="order-box-frame"
+        v-for="(order, index) in orderData"
+        :key="index"
+      >
         <div class="order-box">
           <div class="text-outframe">
             <div class="text-frame">
@@ -16,8 +20,8 @@
             <div class="order-info-box-outframe">
               <div
                 class="order-info-box-frame"
-                v-for="list in order.list"
-                :key="list"
+                v-for="(list, index) in order.list"
+                :key="index"
               >
                 <div class="text-frame">
                   <div class="order-info">{{ list.name }}</div>
@@ -29,21 +33,53 @@
           </div>
           <div class="btn-frame">
             <i class="fa-solid fa-pencil"></i>
-            <i class="fa-solid fa-trash-can"></i>
+            <i class="fa-solid fa-trash-can" @click="ShowCheckEle(index)"></i>
           </div>
         </div>
       </div>
     </div>
+
+    <transition name="x-slide">
+      <ErrorMessage class="error-msg" v-show="showErrorMsg" />
+    </transition>
+
+    <transition name="slide-loader">
+      <LoadingEle v-if="showLoader" />
+    </transition>
+
+    <div
+      class="overlay"
+      v-show="showCheckEle"
+      @click="showCheckEle = false"
+    ></div>
+    <transition name="slide-loader">
+      <CheckEle class="check-ele" v-if="showCheckEle" />
+    </transition>
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
+import ErrorMessage from "../../components/ErrorMessage.vue";
+import { errorText, errorType } from "../../components/LoginPage.vue";
+import LoadingEle from "../../components/LoadingEle.vue";
+import CheckEle from "./CheckEle.vue";
+import {
+  removeData,
+  showCheckEle,
+  showErrorMsg,
+  showLoader,
+} from "../../components/backstage/ReviewPage.vue";
 
 export default {
   name: "BackOrder",
+  components: {
+    ErrorMessage,
+    LoadingEle,
+    CheckEle,
+  },
   setup() {
-    const orderData = ref({});
+    const orderData = ref([]);
 
     const GetOrderData = async () => {
       const userMail = localStorage.getItem("userEmail");
@@ -66,13 +102,27 @@ export default {
       console.log(orderData.value);
     };
 
+    const ShowCheckEle = (index) => {
+      showCheckEle.value = true;
+
+      removeData.value.type = "order";
+      removeData.value.list = [orderData.value[index]._id];
+    };
+
     onMounted(async () => {
       await GetOrderData();
     });
 
     return {
+      errorText,
+      errorType,
+      removeData,
+      showCheckEle,
+      showErrorMsg,
+      showLoader,
       orderData,
       GetOrderData,
+      ShowCheckEle,
     };
   },
 };
@@ -151,5 +201,58 @@ i {
 i:hover {
   color: #272727;
   cursor: pointer;
+}
+
+.error-msg {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+.check-ele {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.x-slide-enter-active,
+.x-slide-leave-active {
+  transition: all 1s ease;
+}
+.x-slide-enter-from,
+.x-slide-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.x-slide-enter-to,
+.x-slide-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+}
+.slide-loader-enter-active,
+.slide-loader-leave-active {
+  transition: all 1s ease;
+}
+.slide-loader-enter-from,
+.slide-loader-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -50%) translateY(20px);
+}
+.slide-loader-enter-to,
+.slide-loader-leave-from {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0);
 }
 </style>
