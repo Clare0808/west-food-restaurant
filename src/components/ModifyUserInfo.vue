@@ -61,12 +61,13 @@ export default {
       errorText.value = "資料修改成功!";
       errorType.value = false;
       showErrorMsg.value = true;
+
       showModify.value = false;
+      showLoader.value = true;
 
       setTimeout(() => {
         showErrorMsg.value = false;
 
-        showLoader.value = true;
         window.location.reload();
       }, 2000);
     };

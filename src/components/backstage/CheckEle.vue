@@ -47,11 +47,11 @@ export default {
       showErrorMsg.value = true;
 
       showCheckEle.value = false;
+      showLoader.value = true;
 
       setTimeout(() => {
         showErrorMsg.value = false;
 
-        showLoader.value = true;
         window.location.reload();
       }, 2000);
     };

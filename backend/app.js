@@ -1,9 +1,13 @@
 const express = require("express")
 const cors = require("cors")
+const path = require("path")
 
 const app = express()
 
 global.__root = require('path').resolve(__dirname, "..")
+
+app.use("/images", express.static(path.join(__root, "uploads")))
+app.use("/images/_temp", express.static(path.join(__root, "uploads/_temp")))
 
 const mongoose = require("mongoose")
 require("dotenv").config()

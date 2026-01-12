@@ -84,12 +84,13 @@ export default {
       errorText.value = "已成功送出評論!";
       errorType.value = false;
       showErrorMsg.value = true;
+
       showWriteReview.value = false;
+      showLoader.value = true;
 
       setTimeout(() => {
         showErrorMsg.value = false;
 
-        showLoader.value = true;
         window.location.reload();
       }, 2000);
     };

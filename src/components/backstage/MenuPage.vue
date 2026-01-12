@@ -17,7 +17,7 @@
             <div class="dish-description">{{ dish.description }}</div>
           </div>
           <div class="btn-frame">
-            <i class="fa-solid fa-pencil"></i>
+            <i class="fa-solid fa-pencil" @click="HandleModify(index)"></i>
             <i class="fa-solid fa-trash-can" @click="ShowCheckEle(index)"></i>
           </div>
         </div>
@@ -25,7 +25,10 @@
       <div class="add-btn">新增餐點 +</div>
     </div>
 
-    <ModifyMenu class="modify-ele" />
+    <div class="overlay" v-if="showModify" @click="showModify = false"></div>
+    <transition name="slide-loader">
+      <ModifyMenu class="modify-ele" v-if="showModify" />
+    </transition>
 
     <transition name="x-slide">
       <ErrorMessage class="error-msg" v-show="showErrorMsg" />
@@ -60,6 +63,9 @@ import {
 } from "../../components/backstage/ReviewPage.vue";
 import ModifyMenu from "./ModifyMenu.vue";
 
+export const showModify = ref(false);
+export const modifyList = ref({});
+
 export default {
   name: "BackMenu",
   components: {
@@ -76,6 +82,14 @@ export default {
       const data = await response.json();
 
       dishList.value = data;
+    };
+
+    const HandleModify = (index) => {
+      showModify.value = true;
+
+      modifyList.value = dishList.value[index];
+
+      console.log(modifyList.value);
     };
 
     const ShowCheckEle = (index) => {
@@ -98,8 +112,11 @@ export default {
       showCheckEle,
       showErrorMsg,
       showLoader,
+      showModify,
+      modifyList,
       dishList,
       GetDishData,
+      HandleModify,
       ShowCheckEle,
     };
   },
