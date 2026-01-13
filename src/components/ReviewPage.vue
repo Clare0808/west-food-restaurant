@@ -27,6 +27,9 @@
         </div>
       </div>
     </transition>
+    <transition name="slide">
+      <div class="non-content" v-if="showNonContent">快留下第一則評論!</div>
+    </transition>
     <transition name="fade">
       <div class="add-btn" @click="showWriteReview = true" v-if="showFade">
         +
@@ -71,12 +74,26 @@ export default {
     const showSlide = ref(false);
     const showFade = ref(false);
     const reviewData = ref(false);
+    const showNonContent = ref(false);
 
     const GetReview = async () => {
       const response = await fetch(`http://localhost:3000/api/get-review`);
       const data = await response.json();
 
       reviewData.value = data;
+      console.log(reviewData.value);
+    };
+
+    const ExamPage = () => {
+      if (reviewData.value.length == 0) {
+        showNonContent.value = true;
+
+        const reviewEle = document.querySelector(".review-page");
+        reviewEle.style.height = "79vh";
+      } else if (reviewData.value.length <= 6) {
+        const reviewEle = document.querySelector(".review-page");
+        reviewEle.style.height = "79vh";
+      }
     };
 
     onMounted(async () => {
@@ -86,6 +103,8 @@ export default {
       showLoader.value = false;
 
       await GetReview();
+
+      ExamPage();
     });
 
     return {
@@ -97,7 +116,9 @@ export default {
       showSlide,
       showFade,
       reviewData,
+      showNonContent,
       GetReview,
+      ExamPage,
     };
   },
 };
@@ -108,7 +129,7 @@ export default {
   padding-bottom: 50px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   position: relative;
 }
@@ -162,6 +183,10 @@ export default {
 .review-text-frame {
   font-size: 20px;
   text-align: start;
+}
+.non-content {
+  font-size: 30px;
+  margin-top: 100px;
 }
 .add-btn {
   width: 60px;

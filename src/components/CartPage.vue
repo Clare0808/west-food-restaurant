@@ -257,6 +257,8 @@ export default {
       if (selectAllClick.value) {
         for (const item of filteredData.value) {
           item.check = true;
+
+          totalPrice.value += item.price;
         }
       } else {
         for (const item of filteredData.value) {

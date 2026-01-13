@@ -2,7 +2,9 @@ const mongoose = require("mongoose")
 
 const ItemSchema = new mongoose.Schema({
     name: String,
-    amount: Number, 
+    amount: Number,
+    price: Number,
+    total: Number,
 })
 
 const BuySchema = new mongoose.Schema({

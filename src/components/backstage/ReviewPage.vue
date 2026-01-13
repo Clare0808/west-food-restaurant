@@ -27,32 +27,12 @@
         </div>
       </div>
     </div>
-
-    <transition name="x-slide">
-      <ErrorMessage class="error-msg" v-show="showErrorMsg" />
-    </transition>
-
-    <transition name="slide-loader">
-      <LoadingEle v-if="showLoader" />
-    </transition>
-
-    <div
-      class="overlay"
-      v-if="showCheckEle"
-      @click="showCheckEle = false"
-    ></div>
-    <transition name="slide-loader">
-      <CheckEle class="check-ele" v-if="showCheckEle" />
-    </transition>
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
-import ErrorMessage from "../../components/ErrorMessage.vue";
 import { errorText, errorType } from "../../components/LoginPage.vue";
-import LoadingEle from "../../components/LoadingEle.vue";
-import CheckEle from "./CheckEle.vue";
 
 export const removeData = ref({});
 export const showCheckEle = ref(false);
@@ -61,11 +41,6 @@ export const showLoader = ref(false);
 
 export default {
   name: "BackReview",
-  components: {
-    ErrorMessage,
-    LoadingEle,
-    CheckEle,
-  },
   setup() {
     const reviewData = ref([]);
 
@@ -177,58 +152,5 @@ export default {
 .btn-frame i:hover {
   color: #272727;
   cursor: pointer;
-}
-
-.error-msg {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 2;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.4);
-  z-index: 1;
-}
-.check-ele {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-}
-
-.x-slide-enter-active,
-.x-slide-leave-active {
-  transition: all 1s ease;
-}
-.x-slide-enter-from,
-.x-slide-leave-to {
-  opacity: 0;
-  transform: translateX(20px);
-}
-.x-slide-enter-to,
-.x-slide-leave-from {
-  opacity: 1;
-  transform: translateX(0);
-}
-.slide-loader-enter-active,
-.slide-loader-leave-active {
-  transition: all 1s ease;
-}
-.slide-loader-enter-from,
-.slide-loader-leave-to {
-  opacity: 0;
-  transform: translate(-50%, -50%) translateY(20px);
-}
-.slide-loader-enter-to,
-.slide-loader-leave-from {
-  opacity: 1;
-  transform: translate(-50%, -50%) translateY(0);
 }
 </style>

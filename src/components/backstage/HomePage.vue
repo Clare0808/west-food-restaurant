@@ -20,14 +20,44 @@
     <transition name="slide">
       <router-view class="child-page" v-if="showSlide" />
     </transition>
+
+    <transition name="x-slide">
+      <ErrorMessage class="error-msg" v-show="showErrorMsg" />
+    </transition>
+
+    <transition name="slide-loader">
+      <LoadingEle v-if="showLoader" />
+    </transition>
+
+    <div
+      class="overlay"
+      v-if="showCheckEle"
+      @click="showCheckEle = false"
+    ></div>
+    <transition name="slide-loader">
+      <CheckEle class="check-ele" v-if="showCheckEle" />
+    </transition>
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
+import ErrorMessage from "../../components/ErrorMessage.vue";
+import LoadingEle from "../../components/LoadingEle.vue";
+import CheckEle from "./CheckEle.vue";
+import {
+  showCheckEle,
+  showErrorMsg,
+  showLoader,
+} from "../../components/backstage/ReviewPage.vue";
 
 export default {
   name: "BackHome",
+  components: {
+    ErrorMessage,
+    LoadingEle,
+    CheckEle,
+  },
   setup() {
     const showSlide = ref(false);
 
@@ -37,6 +67,9 @@ export default {
 
     return {
       showSlide,
+      showCheckEle,
+      showErrorMsg,
+      showLoader,
     };
   },
 };
@@ -104,6 +137,44 @@ a:focus {
   padding: 20px;
 }
 
+.error-msg {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+.check-ele {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.x-slide-enter-active,
+.x-slide-leave-active {
+  transition: all 1s ease;
+}
+.x-slide-enter-from,
+.x-slide-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.x-slide-enter-to,
+.x-slide-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+}
 .slide-enter-active,
 .slide-leave-active {
   transition: all 1s ease;
@@ -117,5 +188,19 @@ a:focus {
 .slide-leave-from {
   opacity: 1;
   transform: translateY(0);
+}
+.slide-loader-enter-active,
+.slide-loader-leave-active {
+  transition: all 1s ease;
+}
+.slide-loader-enter-from,
+.slide-loader-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -50%) translateY(20px);
+}
+.slide-loader-enter-to,
+.slide-loader-leave-from {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0);
 }
 </style>

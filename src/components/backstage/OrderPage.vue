@@ -32,51 +32,45 @@
             <div class="order-price">${{ order.total }}</div>
           </div>
           <div class="btn-frame">
-            <i class="fa-solid fa-pencil"></i>
+            <i class="fa-solid fa-pencil" @click="HandleModify(index)"></i>
             <i class="fa-solid fa-trash-can" @click="ShowCheckEle(index)"></i>
           </div>
         </div>
       </div>
     </div>
 
-    <transition name="x-slide">
-      <ErrorMessage class="error-msg" v-show="showErrorMsg" />
+    <div class="overlay" v-if="showModify" @click="showModify = false"></div>
+    <transition name="slide-child">
+      <ModifyOrder class="modify-ele" v-if="showModify" />
     </transition>
 
-    <transition name="slide-loader">
-      <LoadingEle v-if="showLoader" />
-    </transition>
-
-    <div
-      class="overlay"
-      v-show="showCheckEle"
-      @click="showCheckEle = false"
-    ></div>
-    <transition name="slide-loader">
-      <CheckEle class="check-ele" v-if="showCheckEle" />
+    <div class="overlay" v-if="showOption" @click="showOption = false"></div>
+    <transition name="slide-child">
+      <DishOption class="dish-option" v-if="showOption" />
     </transition>
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
-import ErrorMessage from "../../components/ErrorMessage.vue";
 import { errorText, errorType } from "../../components/LoginPage.vue";
-import LoadingEle from "../../components/LoadingEle.vue";
-import CheckEle from "./CheckEle.vue";
 import {
   removeData,
   showCheckEle,
-  showErrorMsg,
-  showLoader,
 } from "../../components/backstage/ReviewPage.vue";
+import ModifyOrder from "./ModifyOrder.vue";
+import DishOption from "./DishOption.vue";
+
+export const showModify = ref(false);
+export const modifyList = ref({});
+export const showOption = ref(false);
+export const selectedOption = ref("");
 
 export default {
   name: "BackOrder",
   components: {
-    ErrorMessage,
-    LoadingEle,
-    CheckEle,
+    ModifyOrder,
+    DishOption,
   },
   setup() {
     const orderData = ref([]);
@@ -109,6 +103,12 @@ export default {
       removeData.value.list = [orderData.value[index]._id];
     };
 
+    const HandleModify = (index) => {
+      showModify.value = true;
+
+      modifyList.value = orderData.value[index];
+    };
+
     onMounted(async () => {
       await GetOrderData();
     });
@@ -118,11 +118,14 @@ export default {
       errorType,
       removeData,
       showCheckEle,
-      showErrorMsg,
-      showLoader,
+      showModify,
+      showOption,
+      selectedOption,
+      modifyList,
       orderData,
       GetOrderData,
       ShowCheckEle,
+      HandleModify,
     };
   },
 };
@@ -203,13 +206,6 @@ i:hover {
   cursor: pointer;
 }
 
-.error-msg {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 2;
-}
-
 .overlay {
   position: fixed;
   top: 0;
@@ -219,39 +215,29 @@ i:hover {
   background-color: rgba(0, 0, 0, 0.4);
   z-index: 1;
 }
-.check-ele {
+.modify-ele,
+.dish-option {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
 }
+.dish-option {
+  z-index: 3;
+}
 
-.x-slide-enter-active,
-.x-slide-leave-active {
+.slide-child-enter-active,
+.slide-child-leave-active {
   transition: all 1s ease;
 }
-.x-slide-enter-from,
-.x-slide-leave-to {
-  opacity: 0;
-  transform: translateX(20px);
-}
-.x-slide-enter-to,
-.x-slide-leave-from {
-  opacity: 1;
-  transform: translateX(0);
-}
-.slide-loader-enter-active,
-.slide-loader-leave-active {
-  transition: all 1s ease;
-}
-.slide-loader-enter-from,
-.slide-loader-leave-to {
+.slide-child-enter-from,
+.slide-child-leave-to {
   opacity: 0;
   transform: translate(-50%, -50%) translateY(20px);
 }
-.slide-loader-enter-to,
-.slide-loader-leave-from {
+.slide-child-enter-to,
+.slide-child-leave-from {
   opacity: 1;
   transform: translate(-50%, -50%) translateY(0);
 }

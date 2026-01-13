@@ -82,6 +82,8 @@ export default {
 
       if (modifyColumn.value === "name") {
         userInfo.value = data.filter((item) => item.email === userMail)[0].name;
+
+        localStorage.setItem("userName", userInfo.value);
       } else {
         userInfo.value = data.filter(
           (item) => item.email === userMail
