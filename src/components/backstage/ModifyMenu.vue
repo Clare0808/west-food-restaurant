@@ -200,8 +200,9 @@ export default {
 }
 .title {
   color: #f0c42d;
-  font-size: 26px;
-  margin-bottom: 10px;
+  font-size: 35px;
+  font-weight: bold;
+  margin: 20px 0;
 }
 .info-frame {
   display: grid;
@@ -247,6 +248,7 @@ img {
 input {
   width: 95%;
   font-size: 20px;
+  font-family: "Brush Script MT", cursive;
   text-align: center;
   border: none;
   border-bottom: 1px solid #ffea9d;
