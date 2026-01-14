@@ -34,7 +34,7 @@
     </div>
     <div class="btn-frame">
       <div class="no-btn" @click="ClickCancel">取消</div>
-      <div class="yes-btn">確定</div>
+      <div class="yes-btn" @click="SendModify">確定</div>
     </div>
   </div>
 </template>
@@ -47,6 +47,11 @@ import {
   showOption,
   selectedOption,
 } from "../../components/backstage/OrderPage.vue";
+import { errorText, errorType } from "../../components/LoginPage.vue";
+import {
+  showErrorMsg,
+  showLoader,
+} from "../../components/backstage/ReviewPage.vue";
 
 export default {
   setup() {
@@ -55,7 +60,7 @@ export default {
     const tempIndex = ref(-1);
 
     const GetModifyList = () => {
-      orderList.value = JSON.parse(JSON.stringify(modifyList.value));
+      orderList.value = structuredClone(modifyList.value);
 
       totalPrice.value = orderList.value.total;
     };
@@ -77,33 +82,107 @@ export default {
     };
 
     const FindDishPrice = async () => {
-      const response = await fetch("/data/dishData.json");
-      const data = await response.json();
+      if (selectedOption.value) {
+        const response = await fetch("/data/dishData.json");
+        const data = await response.json();
 
-      const dish = data.find((item) => item.name === selectedOption.value);
+        const dish = data.find((item) => item.name === selectedOption.value);
 
-      if (tempIndex.value >= 0) {
-        const target = orderList.value.list[tempIndex.value];
+        if (tempIndex.value >= 0) {
+          const target = orderList.value.list[tempIndex.value];
 
-        target.name = dish.name;
-        target.price = dish.price;
-        target.total = target.price * target.amount;
+          target.name = dish.name;
+          target.price = dish.price;
+          target.total = target.price * target.amount;
+        } else {
+          orderList.value.list.push({
+            name: selectedOption.value,
+            amount: 1,
+            price: dish.price,
+            total: dish.price,
+          });
+        }
+
+        totalPrice.value = 0;
+
+        for (const data of orderList.value.list) {
+          totalPrice.value += data.total;
+        }
+
+        tempIndex.value = -1;
+      }
+    };
+
+    const SendModify = async () => {
+      if (
+        JSON.stringify(orderList.value) !== JSON.stringify(modifyList.value)
+      ) {
+        const tempId = orderList.value._id;
+
+        const response = await fetch(
+          `http://localhost:3000/api/send-buy-orders`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: orderList.value.email,
+              list: orderList.value.list,
+              total: totalPrice.value,
+              code: orderList.value.code,
+              date: orderList.value.date,
+            }),
+          }
+        );
+
+        await RemoveOrder(tempId);
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        errorText.value = "已成功修改訂單!";
+        errorType.value = false;
+        showErrorMsg.value = true;
+
+        showModify.value = false;
+        showLoader.value = true;
+
+        setTimeout(() => {
+          showErrorMsg.value = false;
+
+          window.location.reload();
+        }, 2000);
       } else {
-        orderList.value.list.push({
-          name: selectedOption.value,
-          amount: 1,
-          price: dish.price,
-          total: dish.price,
-        });
+        errorText.value = "訂單未修改!";
+        errorType.value = true;
+
+        showErrorMsg.value = true;
+
+        setTimeout(() => {
+          showErrorMsg.value = false;
+        }, 2000);
       }
+    };
 
-      totalPrice.value = 0;
+    const RemoveOrder = async (id) => {
+      const response = await fetch(
+        `http://localhost:3000/api/remove-buy-orders`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            list: [id],
+          }),
+        }
+      );
 
-      for (const data of orderList.value.list) {
-        totalPrice.value += data.total;
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
       }
-
-      tempIndex.value = -1;
     };
 
     const ClickPencil = (index) => {
@@ -133,12 +212,18 @@ export default {
       modifyList,
       showOption,
       selectedOption,
+      errorText,
+      errorType,
+      showErrorMsg,
+      showLoader,
       orderList,
       totalPrice,
       tempIndex,
       GetModifyList,
       CountDishAmount,
       FindDishPrice,
+      SendModify,
+      RemoveOrder,
       ClickPencil,
       ClickCancel,
     };
