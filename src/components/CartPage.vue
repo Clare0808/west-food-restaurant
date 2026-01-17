@@ -258,11 +258,13 @@ export default {
         for (const item of filteredData.value) {
           item.check = true;
 
-          totalPrice.value += item.price;
+          totalPrice.value += item.total;
         }
       } else {
         for (const item of filteredData.value) {
           item.check = false;
+
+          totalPrice.value = 0;
         }
       }
     };

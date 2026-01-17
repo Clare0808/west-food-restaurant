@@ -170,6 +170,7 @@ export default {
   margin: 20px 0;
 }
 .options-frame {
+  margin-bottom: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -199,6 +200,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(3, 30%);
   grid-template-rows: auto;
+  gap: 20px;
   justify-content: center;
   align-items: center;
 }
@@ -207,7 +209,6 @@ export default {
   background-color: #ffffff;
   border: 1px solid #f0c42d;
   border-radius: 20px;
-  margin: 20px 0;
   padding: 20px;
   display: flex;
   flex-direction: column;

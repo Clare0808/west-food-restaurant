@@ -60,6 +60,7 @@ export default {
       const minutes = String(date.getMinutes()).padStart(2, "0");
 
       orderTime.value = `${year}-${month}-${day} ${hours}:${minutes}`;
+      // orderTime.value = "2026-02-02 13:56";
     };
 
     const CreateOrderCode = () => {

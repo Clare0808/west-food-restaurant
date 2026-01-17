@@ -157,7 +157,7 @@ export default {
     const ClickCancel = () => {
       showModify.value = false;
 
-      filteredData.value.image = tempImage.value;
+      filteredData.value.image = modifyList.value.image;
     };
 
     onMounted(() => {

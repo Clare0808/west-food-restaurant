@@ -30,6 +30,7 @@
             </div>
             <div class="func-frame">
               <div class="sec-title">訂餐紀錄</div>
+              <div class="non-content" v-if="showNonContent">尚無訂單紀錄</div>
               <div class="order-outframe">
                 <div v-for="order in filteredData" :key="order">
                   <div class="order-frame">
@@ -91,6 +92,7 @@ export default {
     const filteredData = ref({});
     const userName = ref("");
     const userNumber = ref("");
+    const showNonContent = ref(false);
 
     const router = useRouter();
 
@@ -101,6 +103,10 @@ export default {
       const userMail = localStorage.getItem("userEmail");
 
       filteredData.value = data.filter((order) => order.email === userMail);
+
+      if (filteredData.value.length === 0) {
+        showNonContent.value = true;
+      }
     };
 
     const GetUserInfo = async () => {
@@ -145,6 +151,7 @@ export default {
       userName,
       userNumber,
       showModify,
+      showNonContent,
       GetOrderData,
       GetUserInfo,
       ClickModify,
@@ -268,6 +275,11 @@ img {
   color: #f0c42d;
   font-size: 22px;
   margin-bottom: 10px;
+}
+.non-content {
+  font-size: 20px;
+  text-align: center;
+  margin-top: 50px;
 }
 .order-outframe {
   max-height: 370px;
