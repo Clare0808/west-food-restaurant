@@ -8,13 +8,13 @@
       </div>
       <div class="data-flame">
         <transition name="fade">
-          <canvas ref="amountCanvas" v-if="showSold"></canvas>
+          <canvas ref="amountCanvas" v-show="showSold"></canvas>
         </transition>
         <transition name="fade">
-          <canvas ref="reviewCanvas" v-if="showStar"></canvas>
+          <canvas ref="reviewCanvas" v-show="showStar"></canvas>
         </transition>
         <transition name="fade">
-          <canvas ref="revenueCanvas" v-if="showRevenue"></canvas>
+          <canvas ref="revenueCanvas" v-show="showRevenue"></canvas>
         </transition>
       </div>
     </div>
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { ref, nextTick, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { Chart, registerables } from "chart.js";
 
 Chart.register(...registerables); // 註冊 Chart.js
@@ -116,105 +116,96 @@ export default {
         showSold.value = true;
         showStar.value = false;
         showRevenue.value = false;
-
-        await nextTick();
-
-        new Chart(amountCanvas.value, {
-          type: "bar",
-          data: {
-            labels: dishSold.value.map((item) => item.name),
-            datasets: [
-              {
-                label: "Amount",
-                data: dishSold.value.map((item) => item.amount),
-                backgroundColor: "#ffea9d",
-              },
-            ],
-          },
-          options: {
-            responsive: false,
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  stepSize: 1, // 每格間距為 1，確保都是整數
-                },
-              },
-            },
-          },
-        });
       } else if (type === "star") {
         showSold.value = false;
         showStar.value = true;
         showRevenue.value = false;
-
-        await nextTick();
-
-        new Chart(reviewCanvas.value, {
-          type: "bar",
-          data: {
-            labels: reviewData.value.map((item) => item.label),
-            datasets: [
-              {
-                label: "Amount",
-                data: reviewData.value.map((item) => item.amount),
-                backgroundColor: "#ffea9d",
-              },
-            ],
-          },
-          options: {
-            responsive: false,
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  stepSize: 1, // 每格間距為 1，確保都是整數
-                },
-              },
-            },
-          },
-        });
       } else if (type === "revenue") {
         showSold.value = false;
         showStar.value = false;
         showRevenue.value = true;
-
-        await nextTick();
-
-        new Chart(revenueCanvas.value, {
-          type: "line",
-          data: {
-            labels: revenueData.value.map((item) => item.time),
-            datasets: [
-              {
-                label: "Amount",
-                data: revenueData.value.map((item) => item.total),
-                backgroundColor: "#f0c42d",
-                borderColor: "#ffea9d",
-              },
-            ],
-          },
-          options: {
-            responsive: false,
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  stepSize: 1, // 每格間距為 1，確保都是整數
-                },
-              },
-            },
-          },
-        });
       }
     };
 
     onMounted(async () => {
       await GetDishSold();
+      new Chart(amountCanvas.value, {
+        type: "bar",
+        data: {
+          labels: dishSold.value.map((item) => item.name),
+          datasets: [
+            {
+              label: "Amount",
+              data: dishSold.value.map((item) => item.amount),
+              backgroundColor: "#ffea9d",
+            },
+          ],
+        },
+        options: {
+          responsive: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1, // 每格間距為 1，確保都是整數
+              },
+            },
+          },
+        },
+      });
 
       await GetReviewData();
+      new Chart(reviewCanvas.value, {
+        type: "bar",
+        data: {
+          labels: reviewData.value.map((item) => item.label),
+          datasets: [
+            {
+              label: "Amount",
+              data: reviewData.value.map((item) => item.amount),
+              backgroundColor: "#ffea9d",
+            },
+          ],
+        },
+        options: {
+          responsive: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1, // 每格間距為 1，確保都是整數
+              },
+            },
+          },
+        },
+      });
 
       await GetRevenueData();
+      new Chart(revenueCanvas.value, {
+        type: "line",
+        data: {
+          labels: revenueData.value.map((item) => item.time),
+          datasets: [
+            {
+              label: "Amount",
+              data: revenueData.value.map((item) => item.total),
+              backgroundColor: "#f0c42d",
+              borderColor: "#ffea9d",
+            },
+          ],
+        },
+        options: {
+          responsive: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1, // 每格間距為 1，確保都是整數
+              },
+            },
+          },
+        },
+      });
     });
 
     return {
@@ -273,7 +264,7 @@ canvas {
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: all 1s ease;
+  transition: all 0.8s ease;
 }
 .fade-enter-from,
 .fade-leave-to {
