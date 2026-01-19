@@ -6,35 +6,37 @@
     <transition name="fade">
       <div class="title" v-if="showText">菜單 Menu</div>
     </transition>
-    <transition name="slide">
-      <div class="options-frame" v-if="showElement">
-        <div v-for="(opt, index) in OptionsData" :key="index">
+    <div class="container">
+      <transition name="slide">
+        <div class="options-frame" v-if="showElement">
+          <div v-for="(opt, index) in OptionsData" :key="index">
+            <div
+              class="option"
+              @click="ClickOptions(opt)"
+              :class="{ active: opt.click }"
+            >
+              {{ opt.name }}
+            </div>
+          </div>
+        </div>
+      </transition>
+      <transition name="slide">
+        <div class="dish-box-frame" v-if="showElement">
           <div
-            class="option"
-            @click="ClickOptions(opt)"
-            :class="{ active: opt.click }"
+            class="dish-frame"
+            v-for="(dish, index) in filteredList"
+            :key="index"
+            @click="ClickDish(dish)"
           >
-            {{ opt.name }}
+            <img :src="dish.image" />
+            <div class="dish-info-frame">
+              <div class="dish-name">{{ dish.name }}</div>
+              <div class="dish-price">${{ dish.price }}</div>
+            </div>
           </div>
         </div>
-      </div>
-    </transition>
-    <transition name="slide">
-      <div class="dish-box-frame" v-if="showElement">
-        <div
-          class="dish-frame"
-          v-for="(dish, index) in filteredList"
-          :key="index"
-          @click="ClickDish(dish)"
-        >
-          <img :src="dish.image" />
-          <div class="dish-info-frame">
-            <div class="dish-name">{{ dish.name }}</div>
-            <div class="dish-price">${{ dish.price }}</div>
-          </div>
-        </div>
-      </div>
-    </transition>
+      </transition>
+    </div>
 
     <div
       class="overlay"
@@ -168,6 +170,13 @@ export default {
   font-size: 35px;
   font-weight: bold;
   margin: 20px 0;
+}
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 .options-frame {
   margin-bottom: 20px;
@@ -307,5 +316,58 @@ export default {
 .x-slide-leave-from {
   opacity: 1;
   transform: translateX(0);
+}
+
+@media (max-width: 1250px) {
+  .dish-box-frame {
+    width: auto;
+    grid-template-columns: repeat(2, 50%);
+    grid-template-rows: auto;
+    gap: 30px;
+  }
+}
+@media (max-width: 1000px) {
+  .container {
+    flex-direction: row;
+    position: relative;
+  }
+  .options-frame {
+    margin-right: 30px;
+    flex-direction: column;
+    position: absolute;
+    top: 0px;
+    left: 20px;
+  }
+  .dish-box-frame {
+    margin-left: 140px;
+  }
+  .dish-frame {
+    width: 250px;
+  }
+  .dish-frame img {
+    width: 200px;
+  }
+}
+@media (max-width: 800px) {
+  .dish-box-frame {
+    margin-left: 120px;
+    grid-template-columns: 100%;
+  }
+}
+@media (max-width: 480px) {
+  .dish-info-frame {
+    font-size: 20px;
+  }
+  .dish-frame {
+    width: 180px;
+  }
+  .dish-frame img {
+    width: 120px;
+  }
+  .option {
+    width: 60px;
+    font-size: 18px;
+    padding: 6px;
+  }
 }
 </style>

@@ -25,6 +25,7 @@ export default {
         menu: "remove-menu",
         order: "remove-buy-orders",
         review: "remove-review",
+        contact: "remove-contact",
       };
       const removeType = removeMap[removeData.value.type];
 

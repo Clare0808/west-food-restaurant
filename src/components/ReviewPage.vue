@@ -197,7 +197,7 @@ export default {
   line-height: 60px;
   background-color: #f0c42d;
   border-radius: 50%;
-  position: absolute;
+  position: fixed;
   bottom: 30px;
   right: 30px;
   transition: all 0.3s ease;
@@ -293,5 +293,16 @@ export default {
 .slide-loader-leave-from {
   opacity: 1;
   transform: translate(-50%, -50%) translateY(0);
+}
+
+@media (max-width: 1130px) {
+  .review-box-frame {
+    grid-template-columns: repeat(2, 350px);
+  }
+}
+@media (max-width: 760px) {
+  .review-box-frame {
+    grid-template-columns: 330px;
+  }
 }
 </style>

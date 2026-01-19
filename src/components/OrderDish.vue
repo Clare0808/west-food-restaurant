@@ -165,4 +165,24 @@ img {
   cursor: pointer;
   transform: scale(1.1);
 }
+
+@media (max-width: 500px) {
+  img {
+    width: 200px;
+  }
+  .num-frame {
+    font-size: 18px;
+  }
+  .num-btn {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+  }
+  .btn {
+    width: 100px;
+    height: 30px;
+    font-size: 16px;
+    line-height: 30px;
+  }
+}
 </style>

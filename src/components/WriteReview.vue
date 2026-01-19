@@ -221,4 +221,14 @@ textarea:focus {
 .cancel-btn:hover {
   border: 1px solid #ffea9d;
 }
+
+@media (max-width: 540px) {
+  .submit-btn,
+  .cancel-btn {
+    width: 100px;
+    height: 30px;
+    font-size: 16px;
+    line-height: 30px;
+  }
+}
 </style>

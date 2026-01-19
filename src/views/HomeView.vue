@@ -6,7 +6,8 @@
           <div class="slogan">細細品味西式料理的藝術。</div>
           <div class="sec-slogan">精緻餐飲，應該成為日常生活的一部分。</div>
           <div class="content">
-            我們嚴選高品質食材，以主廚等級的專業手藝精心製作每一道料理，<br />
+            我們嚴選高品質食材，以主廚等級的專業手藝精心製作每一道料理，
+            <br class="next-line" />
             讓您無論何時、在家中也能輕鬆享受餐廳級的西式饗宴。
           </div>
           <div class="btn">了解更多</div>
@@ -50,7 +51,7 @@
       <img src="@/assets/images/homepage4.png" />
     </div>
   </div>
-  <div class="home">
+  <div class="home-why">
     <div class="title">Why Le Savor 西饗 ?</div>
     <div class="info-frame1" id="slide">
       <div
@@ -79,7 +80,7 @@
       </div>
     </div>
   </div>
-  <div class="home">
+  <div class="home-re">
     <div class="title">顧客回饋</div>
     <div class="review-frame" id="slide">
       <div class="last-page">〈</div>
@@ -114,14 +115,26 @@
         0987654321
       </div>
     </div>
+    <i class="fa-solid fa-gamepad" id="game" @click="showGame = true"></i>
+
+    <div class="overlay" v-show="showGame" @click="showGame = false"></div>
+    <transition name="slide-game">
+      <GameElement class="game-ele" v-if="showGame" />
+    </transition>
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
+import GameElement from "../components/GameElement.vue";
+
+export const showGame = ref(false);
 
 export default {
   name: "HomeView",
+  components: {
+    GameElement,
+  },
   setup() {
     const showText = ref(false);
     const showImage = ref(false);
@@ -179,6 +192,7 @@ export default {
     });
 
     return {
+      showGame,
       showText,
       showImage,
       infoData1,
@@ -190,7 +204,9 @@ export default {
 </script>
 
 <style scoped>
-.home {
+.home,
+.home-why,
+.home-re {
   height: 100vh;
   padding: 0 50px;
   display: flex;
@@ -410,6 +426,43 @@ img {
   margin-left: 50px;
   margin-top: 10px;
 }
+#game {
+  width: 60px;
+  height: 60px;
+  color: #ffffff;
+  font-size: 30px;
+  text-align: center;
+  line-height: 60px;
+  background-color: #f0c42d;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+  transition: all 0.3s ease;
+}
+#game:hover {
+  color: #ffea9d;
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+.game-ele {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
 
 .slide-enter-active,
 .slide-leave-active {
@@ -437,6 +490,20 @@ img {
 .fade-leave-from {
   opacity: 1;
 }
+.slide-game-enter-active,
+.slide-game-leave-active {
+  transition: all 1s ease;
+}
+.slide-game-enter-from,
+.slide-game-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -50%) translateY(20px);
+}
+.slide-game-enter-to,
+.slide-game-leave-from {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0);
+}
 
 #slide {
   transition: all 1s ease;
@@ -446,5 +513,85 @@ img {
 #slide.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+@media (max-width: 1020px) {
+  .home {
+    height: 80vh;
+  }
+  .content-frame img {
+    display: none;
+  }
+  .content-frame .text-frame {
+    width: 100%;
+    margin-top: 200px;
+  }
+  .title {
+    margin-bottom: 20px;
+  }
+  .home-why {
+    height: 220vh;
+  }
+  .info-frame1,
+  .info-frame2 {
+    display: block;
+  }
+  .info-box-frame {
+    margin: 0 0;
+  }
+  .info-box {
+    width: 60%;
+    height: 250px;
+    margin: 10px 0;
+  }
+}
+@media (max-width: 700px) {
+  .slogan {
+    font-size: 28px;
+  }
+  .sec-slogan {
+    font-size: 22px;
+  }
+  .content {
+    font-size: 16px;
+  }
+  .next-line {
+    display: none;
+  }
+  .btn {
+    width: 100px;
+    height: 30px;
+    font-size: 16px;
+    line-height: 30px;
+  }
+}
+@media (max-width: 620px) {
+  .dish-info-frame img {
+    display: none;
+  }
+  .dish-info-frame {
+    font-size: 16px;
+  }
+  .dish-info-frame .text-frame {
+    width: 100%;
+  }
+  .dish-name {
+    font-size: 22px;
+  }
+}
+@media (max-width: 500px) {
+  .info-box i {
+    font-size: 30px;
+  }
+  .info-title {
+    font-size: 22px;
+  }
+  .next-page,
+  .last-page {
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    line-height: 30px;
+  }
 }
 </style>
