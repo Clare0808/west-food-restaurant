@@ -1,5 +1,8 @@
 <template>
   <div class="server-page">
+    <transition name="x-slide">
+      <ErrorMessage class="error-msg" v-show="showErrorMsg" />
+    </transition>
     <transition name="fade">
       <div class="title" v-if="showFade">常見問題</div>
     </transition>
@@ -28,23 +31,34 @@
   <transition name="slide-contact">
     <ContactServer class="contact-ele" v-show="showContact" />
   </transition>
+
+  <transition name="slide-loader">
+    <LoadingEle v-if="showLoader" />
+  </transition>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
 import QuestionDataRaw from "../assets/data/questionData.json";
 import ContactServer from "./ContactServer.vue";
+import ErrorMessage from "./ErrorMessage.vue";
+import LoadingEle from "./LoadingEle.vue";
+
+export const showContact = ref(false);
+export const showErrorMsg = ref(false);
+export const showLoader = ref(false);
 
 export default {
   name: "ServerPage",
   components: {
     ContactServer,
+    ErrorMessage,
+    LoadingEle,
   },
   setup() {
     const questionData = ref(QuestionDataRaw);
     const showSlide = ref(false);
     const showFade = ref(false);
-    const showContact = ref(false);
 
     const HandleShowAnswer = (index) => {
       questionData.value[index].show = !questionData.value[index].show;
@@ -65,10 +79,12 @@ export default {
 
     return {
       QuestionDataRaw,
+      showContact,
+      showErrorMsg,
+      showLoader,
       questionData,
       showSlide,
       showFade,
-      showContact,
       HandleShowAnswer,
     };
   },
@@ -83,6 +99,12 @@ export default {
   justify-content: start;
   align-items: center;
   position: relative;
+}
+.error-msg {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 2;
 }
 .title {
   color: #f0c42d;
@@ -99,7 +121,7 @@ export default {
   position: relative;
 }
 .question-box {
-  width: 100%;
+  width: 95%;
   background-color: #ffea9d;
   border-radius: 20px;
   text-align: start;
@@ -232,5 +254,39 @@ export default {
 .slide-contact-leave-from {
   opacity: 1;
   transform: translate(-50%, -50%) translateY(0);
+}
+.x-slide-enter-active,
+.x-slide-leave-active {
+  transition: all 1s ease;
+}
+.x-slide-enter-from,
+.x-slide-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.x-slide-enter-to,
+.x-slide-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+}
+.slide-loader-enter-active,
+.slide-loader-leave-active {
+  transition: all 1s ease;
+}
+.slide-loader-enter-from,
+.slide-loader-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -50%) translateY(20px);
+}
+.slide-loader-enter-to,
+.slide-loader-leave-from {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0);
+}
+
+@media (max-width: 500px) {
+  .question-box {
+    width: 90%;
+  }
 }
 </style>

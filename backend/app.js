@@ -37,6 +37,9 @@ app.use("/api", modifyRoutes)
 const menuRoutes = require("./api/menu")
 app.use("/api", menuRoutes)
 
+const contactRoutes = require("./api/contact")
+app.use("/api", contactRoutes)
+
 app.listen(3000, () => {
   console.log("Backend running on http://localhost:3000")
 })
