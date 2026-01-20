@@ -51,11 +51,13 @@
 
 <script>
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import OptionsDataRaw from "../assets/data/optionsData.json";
 import OrderDish from "./OrderDish.vue";
 import { dishAmount, showErrorMsg } from "../components/OrderDish.vue";
 import ErrorMessage from "./ErrorMessage.vue";
-import { errorText, errorType } from "../components/LoginPage.vue";
+import { loginStatus, errorText, errorType } from "../components/LoginPage.vue";
+import { showMobile } from "../App.vue";
 
 export const orderList = ref({});
 export const showOrderPage = ref(false);
@@ -72,6 +74,8 @@ export default {
     const showText = ref(false);
     const showElement = ref(false);
     const OptionsData = ref(OptionsDataRaw); // 修正成 reactive 狀態
+
+    const router = useRouter();
 
     const GetDishData = async () => {
       const response = await fetch("/data/dishData.json");
@@ -106,19 +110,34 @@ export default {
     };
 
     const ClickDish = (data) => {
-      showOrderPage.value = true;
+      if (loginStatus.value) {
+        showOrderPage.value = true;
 
-      orderList.value.name = data.name;
-      orderList.value.description = data.description;
-      orderList.value.price = data.price;
-      orderList.value.image = data.image;
+        orderList.value.name = data.name;
+        orderList.value.description = data.description;
+        orderList.value.price = data.price;
+        orderList.value.image = data.image;
 
-      dishAmount.value = 1;
+        dishAmount.value = 1;
+      } else {
+        errorText.value = "請先登入帳號!";
+        errorType.value = true;
+
+        showErrorMsg.value = true;
+
+        setTimeout(() => {
+          showErrorMsg.value = false;
+
+          router.push("/login");
+        }, 2000);
+      }
     };
 
     onMounted(async () => {
       showText.value = true;
       showElement.value = true;
+
+      showMobile.value = false;
 
       await GetDishData();
 
@@ -134,8 +153,10 @@ export default {
     return {
       OptionsDataRaw,
       OptionsData,
+      loginStatus,
       errorText,
       errorType,
+      showMobile,
       orderList,
       dishList,
       filteredList,

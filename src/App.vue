@@ -5,9 +5,9 @@
       <router-link to="/">主頁</router-link>
       <router-link to="/menu">菜單</router-link>
       <router-link to="/review">評論</router-link>
-      <router-link to="/contact">客服中心</router-link>
+      <div class="server" @click="ClickServer">客服中心</div>
     </div>
-    <div class="icon-frame" v-show="loginStatus">
+    <div class="icon-frame" v-show="loginStatus == true">
       <router-link to="/cart">
         <i class="fa-solid fa-cart-shopping"></i>
       </router-link>
@@ -21,30 +21,76 @@
         ></i>
       </router-link>
     </div>
-    <router-link to="/login" class="login-btn" v-show="!loginStatus"
+    <i
+      class="fa-solid fa-bars"
+      id="mobile-menu"
+      @click="showMobile = true"
+      v-show="showMobileMenu"
+    ></i>
+    <router-link
+      to="/login"
+      class="login-sign-btn"
+      v-show="loginStatus == false"
       >登入/註冊
     </router-link>
   </nav>
+
+  <div class="overlay" v-show="showMobile" @click="showMobile = false"></div>
+  <transition name="x-slide">
+    <MobileMenu class="mobile-ele" v-if="showMobile" />
+  </transition>
   <router-view />
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
-import { loginStatus } from "./components/LoginPage.vue";
+import { useRouter } from "vue-router";
+import {
+  loginStatus,
+  errorText,
+  errorType,
+  showError,
+} from "../src/components/LoginPage.vue";
+import MobileMenu from "../src/components/MobileMenu.vue";
+
+export const showMobile = ref(false);
+export const showMobileMenu = ref(false);
 
 export default {
+  components: {
+    MobileMenu,
+  },
   setup() {
     const showText = ref(false);
     const showImage = ref(false);
+    const router = useRouter();
 
     const HandleLogout = () => {
       localStorage.removeItem("userEmail");
       loginStatus.value = false;
     };
 
+    const ClickServer = () => {
+      if (!loginStatus.value) {
+        router.push("/login");
+
+        errorText.value = "請先登入帳號!";
+        errorType.value = true;
+
+        showError.value = true;
+
+        setTimeout(() => {
+          showError.value = false;
+        }, 2000);
+      } else {
+        router.push("/contact");
+      }
+    };
+
     onMounted(() => {
       showText.value = true;
       showImage.value = true;
+      showMobileMenu.value = true;
 
       const loginMail = localStorage.getItem("userEmail");
 
@@ -57,9 +103,15 @@ export default {
 
     return {
       loginStatus,
+      errorText,
+      errorType,
+      showError,
+      showMobile,
       showText,
       showImage,
+      showMobileMenu,
       HandleLogout,
+      ClickServer,
     };
   },
 };
@@ -96,6 +148,9 @@ nav {
   font-size: 35px;
   font-weight: bold;
 }
+.function-frame {
+  display: flex;
+}
 .function-frame a {
   color: #272727;
   font-size: 24px;
@@ -107,6 +162,19 @@ nav {
 }
 .function-frame a:hover {
   color: #f0c42d;
+  cursor: pointer;
+  transform: scale(1.1);
+}
+.server {
+  color: #272727;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0 20px;
+  transition: all 0.3s ease;
+}
+.server:hover {
+  color: #f0c42d;
+  cursor: pointer;
   transform: scale(1.1);
 }
 .function-frame a:focus {
@@ -123,7 +191,7 @@ nav {
   color: #f0c42d;
   transform: scale(1.1);
 }
-.login-btn {
+.login-sign-btn {
   width: 120px;
   height: 40px;
   color: #ffffff;
@@ -135,10 +203,62 @@ nav {
   text-decoration: none;
   transition: all 0.3s ease;
 }
-.login-btn:hover {
+.login-sign-btn:hover {
   color: #272727;
   background-color: #ffea9d;
   cursor: pointer;
   transform: scale(1.1);
+}
+#mobile-menu {
+  display: none;
+  transition: all 0.3s ease;
+}
+#mobile-menu:hover {
+  color: #f0c42d;
+  transform: scale(1.1);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 98;
+}
+.mobile-ele {
+  height: 90vh;
+  position: fixed;
+  top: 50%;
+  left: 0%;
+  transform: translate(0%, -50%);
+  z-index: 99;
+}
+
+.x-slide-enter-active,
+.x-slide-leave-active {
+  transition: all 1s ease;
+}
+.x-slide-enter-from,
+.x-slide-leave-to {
+  opacity: 0;
+  transform: translateX(-20px) translate(0%, -50%);
+}
+.x-slide-enter-to,
+.x-slide-leave-from {
+  opacity: 1;
+  transform: translateX(0) translate(0%, -50%);
+}
+
+@media (max-width: 850px) {
+  .function-frame,
+  .icon-frame,
+  .login-sign-btn {
+    display: none;
+  }
+  #mobile-menu {
+    display: block;
+  }
 }
 </style>

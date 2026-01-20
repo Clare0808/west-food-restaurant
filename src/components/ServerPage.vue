@@ -43,6 +43,7 @@ import QuestionDataRaw from "../assets/data/questionData.json";
 import ContactServer from "./ContactServer.vue";
 import ErrorMessage from "./ErrorMessage.vue";
 import LoadingEle from "./LoadingEle.vue";
+import { showMobile } from "../App.vue";
 
 export const showContact = ref(false);
 export const showErrorMsg = ref(false);
@@ -75,6 +76,8 @@ export default {
     onMounted(() => {
       showSlide.value = true;
       showFade.value = true;
+
+      showMobile.value = false;
     });
 
     return {
@@ -82,6 +85,7 @@ export default {
       showContact,
       showErrorMsg,
       showLoader,
+      showMobile,
       questionData,
       showSlide,
       showFade,

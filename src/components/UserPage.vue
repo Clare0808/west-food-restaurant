@@ -75,6 +75,7 @@ import ErrorMessage from "./ErrorMessage.vue";
 import { errorText, errorType } from "../components/LoginPage.vue";
 import { showErrorMsg, showLoader } from "../components/ModifyUserInfo.vue";
 import LoadingEle from "./LoadingEle.vue";
+import { showMobile } from "../App.vue";
 
 export const modifyColumn = ref("");
 export const showModify = ref(false);
@@ -135,6 +136,8 @@ export default {
       showFade.value = true;
       showSlide.value = true;
 
+      showMobile.value = false;
+
       await GetOrderData();
       await GetUserInfo();
     });
@@ -144,6 +147,7 @@ export default {
       errorType,
       showErrorMsg,
       showLoader,
+      showMobile,
       modifyColumn,
       showFade,
       showSlide,
@@ -388,5 +392,33 @@ img {
 .slide-loader-leave-from {
   opacity: 1;
   transform: translate(-50%, -50%) translateY(0);
+}
+
+@media (max-width: 850px) {
+  img {
+    width: 150px;
+    height: 150px;
+  }
+  .user-info {
+    font-size: 20px;
+  }
+  .user-info i {
+    font-size: 16px;
+    margin-left: 10px;
+  }
+  .btn {
+    width: 100px;
+    height: 30px;
+    font-size: 16px;
+    line-height: 30px;
+  }
+  .order-outframe {
+    max-height: 320px;
+  }
+}
+@media (max-width: 740px) {
+  .func-outframe {
+    display: block;
+  }
 }
 </style>

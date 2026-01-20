@@ -58,10 +58,12 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import ErrorMessage from "./ErrorMessage.vue";
+import { showMobile, showMobileMenu } from "../App.vue";
 
 export const errorText = ref("");
 export const errorType = ref(false);
 export const loginStatus = ref(false);
+export const showError = ref(false);
 
 export default {
   name: "LoginPage",
@@ -71,7 +73,6 @@ export default {
   setup() {
     const showLogin = ref(false);
     const showSignUp = ref(false);
-    const showError = ref(false);
 
     const email = ref("");
     const name = ref("");
@@ -239,15 +240,20 @@ export default {
 
     onMounted(() => {
       showLogin.value = true;
+
+      showMobile.value = false;
+      showMobileMenu.value = true;
     });
 
     return {
+      showMobile,
+      showMobileMenu,
       errorText,
       errorType,
       loginStatus,
+      showError,
       showLogin,
       showSignUp,
-      showError,
       email,
       name,
       number,

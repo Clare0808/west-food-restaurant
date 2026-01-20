@@ -127,6 +127,7 @@
 <script>
 import { ref, onMounted } from "vue";
 import GameElement from "../components/GameElement.vue";
+import { showMobile } from "../App.vue";
 
 export const showGame = ref(false);
 
@@ -189,9 +190,12 @@ export default {
     onMounted(() => {
       showText.value = true;
       showImage.value = true;
+
+      showMobile.value = false;
     });
 
     return {
+      showMobile,
       showGame,
       showText,
       showImage,
@@ -517,7 +521,7 @@ img {
 
 @media (max-width: 1020px) {
   .home {
-    height: 80vh;
+    height: 90vh;
   }
   .content-frame img {
     display: none;

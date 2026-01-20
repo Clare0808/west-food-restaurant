@@ -31,9 +31,7 @@
       <div class="non-content" v-if="showNonContent">快留下第一則評論!</div>
     </transition>
     <transition name="fade">
-      <div class="add-btn" @click="showWriteReview = true" v-if="showFade">
-        +
-      </div>
+      <div class="add-btn" @click="ClickAdd" v-if="showFade">+</div>
     </transition>
 
     <div
@@ -53,8 +51,9 @@
 
 <script>
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import WriteReview from "./WriteReview.vue";
-import { errorText, errorType } from "../components/LoginPage.vue";
+import { loginStatus, errorText, errorType } from "../components/LoginPage.vue";
 import {
   showErrorMsg,
   showWriteReview,
@@ -62,6 +61,7 @@ import {
 } from "../components/WriteReview.vue";
 import ErrorMessage from "./ErrorMessage.vue";
 import LoadingEle from "./LoadingEle.vue";
+import { showMobile } from "../App.vue";
 
 export default {
   name: "ReviewPage",
@@ -76,6 +76,8 @@ export default {
     const reviewData = ref(false);
     const showNonContent = ref(false);
 
+    const router = useRouter();
+
     const GetReview = async () => {
       const response = await fetch(`http://localhost:3000/api/get-review`);
       const data = await response.json();
@@ -89,10 +91,27 @@ export default {
         showNonContent.value = true;
 
         const reviewEle = document.querySelector(".review-page");
-        reviewEle.style.height = "79vh";
+        reviewEle.style.height = "80vh";
       } else if (reviewData.value.length <= 6) {
         const reviewEle = document.querySelector(".review-page");
-        reviewEle.style.height = "79vh";
+        reviewEle.style.height = "80vh";
+      }
+    };
+
+    const ClickAdd = () => {
+      if (loginStatus.value) {
+        showWriteReview.value = true;
+      } else {
+        errorText.value = "請先登入帳號!";
+        errorType.value = true;
+
+        showErrorMsg.value = true;
+
+        setTimeout(() => {
+          showErrorMsg.value = false;
+
+          router.push("/login");
+        }, 2000);
       }
     };
 
@@ -100,6 +119,7 @@ export default {
       showSlide.value = true;
       showFade.value = true;
 
+      showMobile.value = false;
       showLoader.value = false;
 
       await GetReview();
@@ -108,17 +128,20 @@ export default {
     });
 
     return {
+      loginStatus,
       errorText,
       errorType,
       showErrorMsg,
       showWriteReview,
       showLoader,
+      showMobile,
       showSlide,
       showFade,
       reviewData,
       showNonContent,
       GetReview,
       ExamPage,
+      ClickAdd,
     };
   },
 };

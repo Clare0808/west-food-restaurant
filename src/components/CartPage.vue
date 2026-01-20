@@ -38,7 +38,7 @@
                   </div>
                 </div>
               </div>
-              <div class="dish-total-price">{{ order.total }}</div>
+              <div class="dish-total-price">${{ order.total }}</div>
             </div>
             <div class="btn-frame">
               <input
@@ -89,6 +89,7 @@ import {
   showLoader,
 } from "../components/CheckOrder.vue";
 import LoadingEle from "./LoadingEle.vue";
+import { showMobile } from "../App.vue";
 
 export const buyList = ref({});
 
@@ -274,6 +275,7 @@ export default {
       showSlide.value = true;
 
       showLoader.value = false;
+      showMobile.value = false;
 
       await GetOrderData();
 
@@ -286,6 +288,7 @@ export default {
       showErrorMsg,
       showCheck,
       showLoader,
+      showMobile,
       dishAmount,
       showFade,
       showSlide,
@@ -561,5 +564,73 @@ img {
 .x-slide-leave-from {
   opacity: 1;
   transform: translateX(0);
+}
+
+@media (max-width: 700px) {
+  .all-btn,
+  .clean-btn {
+    width: 100px;
+    height: 30px;
+    font-size: 16px;
+    line-height: 30px;
+  }
+  img {
+    width: 100px;
+  }
+  .dish-name {
+    font-size: 20px;
+  }
+  .dish-amount {
+    margin: 0 10px;
+  }
+  .num-frame {
+    font-size: 18px;
+  }
+  .num-btn {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+  }
+  .dish-total-price {
+    font-size: 22px;
+  }
+  .checkbox {
+    width: 20px;
+    height: 20px;
+  }
+  #cancel-btn {
+    font-size: 22px;
+  }
+}
+@media (max-width: 570px) {
+  img {
+    width: 80px;
+    height: 80px;
+  }
+  .info-frame {
+    padding: 10px;
+  }
+  .dish-info {
+    display: block;
+  }
+  .dish-name {
+    text-align: start;
+  }
+  .num-frame {
+    justify-content: end;
+    margin-top: 10px;
+  }
+  .dish-total-price {
+    margin-top: 10px;
+  }
+  .checkout-btn {
+    width: 100px;
+    height: 30px;
+    font-size: 16px;
+    line-height: 30px;
+  }
+  .total-price {
+    font-size: 24px;
+  }
 }
 </style>
