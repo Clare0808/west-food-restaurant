@@ -175,4 +175,22 @@ input:focus {
   cursor: pointer;
   transform: scale(1.1);
 }
+
+@media (max-width: 500px) {
+  .title {
+    font-size: 30px;
+  }
+  .modify-outframe {
+    display: block;
+  }
+  .modify-frame {
+    margin: 20px 0;
+  }
+  .btn {
+    width: 100px;
+    height: 30px;
+    font-size: 16px;
+    line-height: 30px;
+  }
+}
 </style>

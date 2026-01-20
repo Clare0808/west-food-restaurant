@@ -67,9 +67,12 @@ export default {
       const data = await response.json();
 
       userMail.value = localStorage.getItem("userEmail");
-      userName.value = data.filter(
-        (info) => info.email === userMail.value
-      )[0].name;
+
+      if (userMail.value) {
+        userName.value = data.filter(
+          (info) => info.email === userMail.value
+        )[0].name;
+      }
     };
 
     const CreateDate = () => {
@@ -185,6 +188,9 @@ textarea:focus {
 }
 
 @media (max-width: 540px) {
+  .title {
+    font-size: 30px;
+  }
   .submit-btn,
   .cancel-btn {
     width: 100px;

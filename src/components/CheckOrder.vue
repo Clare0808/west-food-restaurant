@@ -222,4 +222,27 @@ export default {
   cursor: pointer;
   transform: scale(1.1);
 }
+
+@media (max-width: 550px) {
+  .title {
+    font-size: 30px;
+  }
+  .order-frame {
+    font-size: 18px;
+  }
+  .dish-frame {
+    font-size: 16px;
+  }
+  .btn {
+    width: 100px;
+    height: 30px;
+    font-size: 16px;
+    line-height: 30px;
+  }
+}
+@media (max-width: 400px) {
+  .order-info {
+    font-size: 16px;
+  }
+}
 </style>

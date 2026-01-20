@@ -223,6 +223,9 @@ textarea:focus {
 }
 
 @media (max-width: 540px) {
+  .title {
+    font-size: 30px;
+  }
   .submit-btn,
   .cancel-btn {
     width: 100px;

@@ -167,6 +167,9 @@ img {
 }
 
 @media (max-width: 500px) {
+  .title {
+    font-size: 30px;
+  }
   img {
     width: 200px;
   }
