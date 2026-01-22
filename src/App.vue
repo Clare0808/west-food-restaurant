@@ -7,7 +7,7 @@
       <router-link to="/review">評論</router-link>
       <div class="server" @click="ClickServer">客服中心</div>
     </div>
-    <div class="icon-frame" v-show="loginStatus == true">
+    <div class="icon-frame" v-show="userStore.isAuthenticated">
       <router-link to="/cart">
         <i class="fa-solid fa-cart-shopping"></i>
       </router-link>
@@ -30,7 +30,7 @@
     <router-link
       to="/login"
       class="login-sign-btn"
-      v-show="loginStatus == false"
+      v-show="!userStore.isAuthenticated"
       >登入/註冊
     </router-link>
   </nav>
@@ -46,12 +46,12 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import {
-  loginStatus,
   errorText,
   errorType,
   showError,
 } from "../src/components/LoginPage.vue";
 import MobileMenu from "../src/components/MobileMenu.vue";
+import { useUserStore } from "@/store/user";
 
 export const showMobile = ref(false);
 export const showMobileMenu = ref(false);
@@ -64,14 +64,15 @@ export default {
     const showText = ref(false);
     const showImage = ref(false);
     const router = useRouter();
+    const userStore = useUserStore();
 
     const HandleLogout = () => {
-      localStorage.removeItem("userEmail");
-      loginStatus.value = false;
+      userStore.logout();
+      router.push("/login");
     };
 
     const ClickServer = () => {
-      if (!loginStatus.value) {
+      if (!userStore.isAuthenticated) {
         router.push("/login");
 
         errorText.value = "請先登入帳號!";
@@ -91,25 +92,17 @@ export default {
       showText.value = true;
       showImage.value = true;
       showMobileMenu.value = true;
-
-      const loginMail = localStorage.getItem("userEmail");
-
-      if (loginMail) {
-        loginStatus.value = true;
-      } else {
-        loginStatus.value = false;
-      }
     });
 
     return {
-      loginStatus,
       errorText,
       errorType,
       showError,
       showMobile,
+      showMobileMenu,
       showText,
       showImage,
-      showMobileMenu,
+      userStore,
       HandleLogout,
       ClickServer,
     };

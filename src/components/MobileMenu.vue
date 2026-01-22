@@ -7,7 +7,7 @@
       <router-link to="/review">評論</router-link>
       <div class="server" @click="ClickServer">客服中心</div>
     </div>
-    <div class="icon-frame" v-show="loginStatus">
+    <div class="icon-frame" v-show="userStore.isAuthenticated">
       <router-link to="/cart">
         <i class="fa-solid fa-cart-shopping"></i>
       </router-link>
@@ -21,7 +21,10 @@
         ></i>
       </router-link>
     </div>
-    <router-link to="/login" class="login-btn" v-show="!loginStatus"
+    <router-link
+      to="/login"
+      class="login-btn"
+      v-show="!userStore.isAuthenticated"
       >登入/註冊
     </router-link>
   </div>
@@ -30,12 +33,8 @@
 <script>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import {
-  loginStatus,
-  errorText,
-  errorType,
-  showError,
-} from "../components/LoginPage.vue";
+import { errorText, errorType, showError } from "../components/LoginPage.vue";
+import { useUserStore } from "@/store/user";
 
 export default {
   name: "MobileMenu",
@@ -44,14 +43,15 @@ export default {
     const showImage = ref(false);
 
     const router = useRouter();
+    const userStore = useUserStore();
 
     const HandleLogout = () => {
-      localStorage.removeItem("userEmail");
-      loginStatus.value = false;
+      userStore.logout();
+      router.push("/login");
     };
 
     const ClickServer = () => {
-      if (!loginStatus.value) {
+      if (!userStore.isAuthenticated) {
         router.push("/login");
 
         errorText.value = "請先登入帳號!";
@@ -70,20 +70,12 @@ export default {
     onMounted(() => {
       showText.value = true;
       showImage.value = true;
-
-      const loginMail = localStorage.getItem("userEmail");
-
-      if (loginMail) {
-        loginStatus.value = true;
-      } else {
-        loginStatus.value = false;
-      }
     });
 
     return {
-      loginStatus,
       showText,
       showImage,
+      userStore,
       HandleLogout,
       ClickServer,
     };

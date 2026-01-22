@@ -56,8 +56,9 @@ import OptionsDataRaw from "../assets/data/optionsData.json";
 import OrderDish from "./OrderDish.vue";
 import { dishAmount, showErrorMsg } from "../components/OrderDish.vue";
 import ErrorMessage from "./ErrorMessage.vue";
-import { loginStatus, errorText, errorType } from "../components/LoginPage.vue";
+import { errorText, errorType } from "../components/LoginPage.vue";
 import { showMobile } from "../App.vue";
+import { useUserStore } from "@/store/user";
 
 export const orderList = ref({});
 export const showOrderPage = ref(false);
@@ -76,6 +77,7 @@ export default {
     const OptionsData = ref(OptionsDataRaw); // 修正成 reactive 狀態
 
     const router = useRouter();
+    const userStore = useUserStore();
 
     const GetDishData = async () => {
       const response = await fetch("/data/dishData.json");
@@ -110,7 +112,7 @@ export default {
     };
 
     const ClickDish = (data) => {
-      if (loginStatus.value) {
+      if (userStore.isAuthenticated) {
         showOrderPage.value = true;
 
         orderList.value.name = data.name;
@@ -133,6 +135,16 @@ export default {
       }
     };
 
+    const HandleGuide = async () => {
+      const userMail = localStorage.getItem("userEmail");
+
+      const responseData = await userStore.init(userMail);
+
+      if (!responseData.dishClicked) {
+        console.log("首次點餐引導");
+      }
+    };
+
     onMounted(async () => {
       showText.value = true;
       showElement.value = true;
@@ -148,12 +160,13 @@ export default {
           data.click = true;
         }
       });
+
+      HandleGuide();
     });
 
     return {
       OptionsDataRaw,
       OptionsData,
-      loginStatus,
       errorText,
       errorType,
       showMobile,
@@ -166,6 +179,7 @@ export default {
       showElement,
       ClickOptions,
       ClickDish,
+      HandleGuide,
     };
   },
 };

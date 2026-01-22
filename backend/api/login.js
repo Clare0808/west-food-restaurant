@@ -1,5 +1,7 @@
 const express = require("express")
 const router = express.Router()
+const bcrypt = require('bcrypt')
+const jwt = require("jsonwebtoken")
 
 const Login = require("../models/login")
 
@@ -8,16 +10,77 @@ router.get("/send-data", async (req, res) => {
     res.json(login)                    
 })
 
+router.post("/now-login", async (req, res) => {
+    const { email } = req.body
+
+    const user = await Login.findOne({ email })
+
+    res.json({
+        success: true,
+        user: { 
+            dishClicked: user.dishClicked,
+        }
+    })
+})
+
 router.post("/signup", async (req, res) => {
     const { email, name, number, password } = req.body
 
-    const login = new Login({ email, name, number, password })
+    const existingUser = await Login.findOne({ email })
+    if (existingUser) {
+        return res.status(400).json({ 
+            success: false,
+            message: "該E-mail已存在!" 
+        })
+    }
+
+    // 密碼加密
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    const login = new Login({ 
+        email, 
+        name, 
+        number, 
+        password: hashedPassword, 
+        role: "user" 
+    })
     await login.save()
 
     res.json({
         success: true,
         message: "註冊成功",
-        user: { email, name, number, password }
+        user: {
+            email, 
+            name, 
+            number, 
+            role: login.role
+        }
+    })
+})
+
+router.post("/login", async (req, res) => {
+    const { email, password } = req.body
+    const user = await Login.findOne({ email })
+
+    if (!user) {
+        return res.status(400).json({ success: false, message: "該E-mail不存在!" })
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password)
+    if (!isMatch) {
+        return res.status(400).json({ success: false, message: "密碼錯誤!" })
+    }
+
+    const token = jwt.sign(
+        { id: user._id, role: user.role }, 
+        process.env.JWT_SECRET, 
+        { expiresIn: "1h" })
+
+    res.json({ 
+        success: true, 
+        message: "登入成功", 
+        user: { email: user.email, name: user.name, role: user.role }, 
+        token: token 
     })
 })
 

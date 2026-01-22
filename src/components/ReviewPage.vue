@@ -53,7 +53,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import WriteReview from "./WriteReview.vue";
-import { loginStatus, errorText, errorType } from "../components/LoginPage.vue";
+import { errorText, errorType } from "../components/LoginPage.vue";
 import {
   showErrorMsg,
   showWriteReview,
@@ -62,6 +62,7 @@ import {
 import ErrorMessage from "./ErrorMessage.vue";
 import LoadingEle from "./LoadingEle.vue";
 import { showMobile } from "../App.vue";
+import { useUserStore } from "@/store/user";
 
 export default {
   name: "ReviewPage",
@@ -77,6 +78,7 @@ export default {
     const showNonContent = ref(false);
 
     const router = useRouter();
+    const userStore = useUserStore();
 
     const GetReview = async () => {
       const response = await fetch(`http://localhost:3000/api/get-review`);
@@ -99,7 +101,7 @@ export default {
     };
 
     const ClickAdd = () => {
-      if (loginStatus.value) {
+      if (userStore.isAuthenticated) {
         showWriteReview.value = true;
       } else {
         errorText.value = "請先登入帳號!";
@@ -128,7 +130,6 @@ export default {
     });
 
     return {
-      loginStatus,
       errorText,
       errorType,
       showErrorMsg,

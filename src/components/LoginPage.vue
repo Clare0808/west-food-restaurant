@@ -59,10 +59,10 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import ErrorMessage from "./ErrorMessage.vue";
 import { showMobile, showMobileMenu } from "../App.vue";
+import { useUserStore } from "@/store/user";
 
 export const errorText = ref("");
 export const errorType = ref(false);
-export const loginStatus = ref(false);
 export const showError = ref(false);
 
 export default {
@@ -81,6 +81,7 @@ export default {
     const confirmPassword = ref("");
 
     const router = useRouter();
+    const userStore = useUserStore();
 
     const ClickChangeType = () => {
       showLogin.value = !showLogin.value;
@@ -93,22 +94,31 @@ export default {
       ExamInputFrame();
 
       if (!errorType.value) {
-        await CheckLoginData();
+        try {
+          if (!errorType.value) {
+            await userStore.login({
+              email: email.value,
+              password: password.value,
+            });
 
-        if (!errorType.value) {
-          errorText.value = "登入成功!";
+            if (userStore.isAuthenticated) {
+              errorText.value = "登入成功!";
+              showError.value = true;
+
+              localStorage.setItem("userEmail", email.value);
+              localStorage.setItem("userName", name.value);
+
+              CleanInput();
+
+              setTimeout(() => {
+                router.push("/");
+              }, 2000);
+            }
+          }
+        } catch (err) {
+          errorText.value = err.message;
+          errorType.value = true;
           showError.value = true;
-
-          localStorage.setItem("userEmail", email.value);
-          localStorage.setItem("userName", name.value);
-
-          CleanInput();
-
-          setTimeout(() => {
-            router.push("/");
-
-            loginStatus.value = true;
-          }, 2000);
         }
       }
 
@@ -121,34 +131,28 @@ export default {
       ExamInputFrame();
 
       if (!errorType.value) {
-        await ExamEmail();
+        try {
+          if (!errorType.value) {
+            errorText.value = "註冊成功!";
+            showError.value = true;
 
-        if (!errorType.value) {
-          errorText.value = "註冊成功!";
-          showError.value = true;
-
-          const response = await fetch(`http://localhost:3000/api/signup`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
+            await userStore.signup({
               email: email.value,
               name: name.value,
               number: number.value,
               password: password.value,
-            }),
-          });
+            });
 
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
+            CleanInput();
+
+            setTimeout(() => {
+              ClickChangeType();
+            }, 2000);
           }
-
-          CleanInput();
-
-          setTimeout(() => {
-            ClickChangeType();
-          }, 2000);
+        } catch (err) {
+          errorText.value = err.message;
+          errorType.value = true;
+          showError.value = true;
         }
       }
 
@@ -187,57 +191,6 @@ export default {
       }
     };
 
-    const ExamEmail = async () => {
-      const response = await fetch(`http://localhost:3000/api/send-data`);
-      const data = await response.json();
-
-      for (const item of data) {
-        if (item.email === email.value) {
-          errorText.value = "該E-mail已存在!";
-          errorType.value = true;
-          showError.value = true;
-
-          return;
-        }
-      }
-
-      errorType.value = false;
-      showError.value = false;
-    };
-
-    const CheckLoginData = async () => {
-      const response = await fetch(`http://localhost:3000/api/send-data`);
-      const data = await response.json();
-
-      let found = false;
-
-      for (const item of data) {
-        if (item.email === email.value) {
-          found = true;
-
-          if (item.password === password.value) {
-            errorType.value = false;
-          } else {
-            errorText.value = "密碼錯誤!";
-            errorType.value = true;
-            showError.value = true;
-          }
-          return;
-        }
-      }
-
-      if (!found) {
-        errorText.value = "該E-mail不存在!";
-        errorType.value = true;
-        showError.value = true;
-
-        return;
-      }
-
-      errorType.value = false;
-      showError.value = false;
-    };
-
     onMounted(() => {
       showLogin.value = true;
 
@@ -250,7 +203,6 @@ export default {
       showMobileMenu,
       errorText,
       errorType,
-      loginStatus,
       showError,
       showLogin,
       showSignUp,
@@ -264,8 +216,6 @@ export default {
       ClickSignUp,
       CleanInput,
       ExamInputFrame,
-      ExamEmail,
-      CheckLoginData,
     };
   },
 };

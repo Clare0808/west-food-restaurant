@@ -1,6 +1,7 @@
 const express = require("express")
 const cors = require("cors")
 const path = require("path")
+const bcrypt = require('bcrypt')
 
 const app = express()
 
@@ -18,6 +19,7 @@ mongoose.connect(process.env.MONGO_URL)
 
 app.use(cors())
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 const loginRoutes = require("./api/login")
 app.use("/api", loginRoutes)
@@ -39,6 +41,28 @@ app.use("/api", menuRoutes)
 
 const contactRoutes = require("./api/contact")
 app.use("/api", contactRoutes)
+
+const Login = require("./models/login")
+
+// 建立管理者
+async function createAdmin() {
+  const admin = await Login.findOne({ role: "admin" })
+
+  if (!admin) {
+    const hashedPassword = await bcrypt.hash("admin123", 10)
+
+    await new Login({
+      email: "admin@example.com",
+      name: "管理者",
+      number: "00000000",
+      password: hashedPassword,
+      role: "admin"
+    }).save()
+  }
+}
+
+createAdmin()
+
 
 app.listen(3000, () => {
   console.log("Backend running on http://localhost:3000")

@@ -26,7 +26,9 @@
                   @click="ClickModify('number')"
                 ></i>
               </div>
-              <div class="btn" @click="ClickBack">進入後台</div>
+              <div class="btn" @click="ClickBack" v-show="userStore.isAdmin">
+                進入後台
+              </div>
             </div>
             <div class="func-frame">
               <div class="sec-title">訂餐紀錄</div>
@@ -76,6 +78,7 @@ import { errorText, errorType } from "../components/LoginPage.vue";
 import { showErrorMsg, showLoader } from "../components/ModifyUserInfo.vue";
 import LoadingEle from "./LoadingEle.vue";
 import { showMobile } from "../App.vue";
+import { useUserStore } from "@/store/user";
 
 export const modifyColumn = ref("");
 export const showModify = ref(false);
@@ -96,6 +99,7 @@ export default {
     const showNonContent = ref(false);
 
     const router = useRouter();
+    const userStore = useUserStore();
 
     const GetOrderData = async () => {
       const response = await fetch(`http://localhost:3000/api/get-buy-orders`);
@@ -156,6 +160,7 @@ export default {
       userNumber,
       showModify,
       showNonContent,
+      userStore,
       GetOrderData,
       GetUserInfo,
       ClickModify,
