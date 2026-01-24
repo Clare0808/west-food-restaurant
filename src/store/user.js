@@ -58,6 +58,20 @@ export const useUserStore = defineStore("user", {
         throw new Error(msg);
       }
     },
+    async modifyUserData(id, column, data) {
+      try {
+        const response = await axios.patch(
+          "http://localhost:3000/api/modify-data",
+          { id: id, column: column, data: data }
+        );
+
+        this.user = response.data;
+        return this.user;
+      } catch (error) {
+        const msg = error.response?.data?.message || "初始化失敗";
+        throw new Error(msg);
+      }
+    },
   },
   getters: {
     isAdmin: (state) => state.user?.role === "admin",

@@ -28,8 +28,9 @@
 
 <script>
 import { ref, onMounted } from "vue";
-import { buyList } from "../components/CartPage.vue";
+import { buyList, showBuyGuide } from "../components/CartPage.vue";
 import { errorText, errorType } from "../components/LoginPage.vue";
+import { useUserStore } from "@/store/user";
 
 export const showErrorMsg = ref(false);
 export const showCheck = ref(false);
@@ -41,6 +42,8 @@ export default {
     const orderTime = ref("");
     const orderCode = ref("");
     const removeList = ref([]);
+
+    const userStore = useUserStore();
 
     const CalculatePrice = () => {
       for (const data of buyList.value) {
@@ -114,6 +117,16 @@ export default {
 
         window.location.reload();
       }, 2000);
+
+      const userMail = localStorage.getItem("userEmail");
+
+      const responseData = await userStore.init(userMail);
+
+      if (!responseData.buyClicked) {
+        localStorage.setItem("buyClicked", "true");
+
+        localStorage.setItem("showBuyClickedGuide", "true");
+      }
     };
 
     const RemoveOrder = async () => {
@@ -142,6 +155,7 @@ export default {
 
     return {
       buyList,
+      showBuyGuide,
       errorText,
       errorType,
       showErrorMsg,

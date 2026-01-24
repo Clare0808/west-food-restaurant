@@ -47,6 +47,22 @@
       <OrderDish class="order-page" v-show="showOrderPage" />
     </transition>
   </div>
+
+  <i
+    class="fa-regular fa-circle-question"
+    id="help-btn"
+    @click="showDishClickGuide = true"
+  ></i>
+
+  <div class="overlay" @click="CloseDishGuide" v-if="showDishClickGuide"></div>
+  <transition name="slide-order">
+    <DishClickGuide class="dish-guide" v-if="showDishClickGuide" />
+  </transition>
+
+  <div class="overlay" @click="CloseCartGuide" v-if="showCartGuide"></div>
+  <transition name="slide-order">
+    <PutInCartGuide class="dish-guide" v-if="showCartGuide" />
+  </transition>
 </template>
 
 <script>
@@ -59,15 +75,20 @@ import ErrorMessage from "./ErrorMessage.vue";
 import { errorText, errorType } from "../components/LoginPage.vue";
 import { showMobile } from "../App.vue";
 import { useUserStore } from "@/store/user";
+import DishClickGuide from "./guide/dishClick.vue";
+import PutInCartGuide from "./guide/putInCartClick.vue";
 
 export const orderList = ref({});
 export const showOrderPage = ref(false);
+export const showCartGuide = ref(false);
 
 export default {
   name: "MenuPage",
   components: {
     OrderDish,
     ErrorMessage,
+    DishClickGuide,
+    PutInCartGuide,
   },
   setup() {
     const dishList = ref([]);
@@ -75,6 +96,7 @@ export default {
     const showText = ref(false);
     const showElement = ref(false);
     const OptionsData = ref(OptionsDataRaw); // 修正成 reactive 狀態
+    const showDishClickGuide = ref(false);
 
     const router = useRouter();
     const userStore = useUserStore();
@@ -141,7 +163,31 @@ export default {
       const responseData = await userStore.init(userMail);
 
       if (!responseData.dishClicked) {
-        console.log("首次點餐引導");
+        showDishClickGuide.value = true;
+      }
+    };
+
+    const CloseDishGuide = async () => {
+      const userMail = localStorage.getItem("userEmail");
+
+      const responseData = await userStore.init(userMail);
+
+      if (showDishClickGuide.value) {
+        showDishClickGuide.value = false;
+
+        userStore.modifyUserData(responseData.id, "dishClicked", true);
+      }
+    };
+
+    const CloseCartGuide = async () => {
+      const userMail = localStorage.getItem("userEmail");
+
+      const responseData = await userStore.init(userMail);
+
+      if (showCartGuide.value) {
+        showCartGuide.value = false;
+
+        userStore.modifyUserData(responseData.id, "putInCartClicked", true);
       }
     };
 
@@ -174,12 +220,16 @@ export default {
       dishList,
       filteredList,
       showOrderPage,
+      showCartGuide,
       showErrorMsg,
       showText,
       showElement,
+      showDishClickGuide,
       ClickOptions,
       ClickDish,
       HandleGuide,
+      CloseDishGuide,
+      CloseCartGuide,
     };
   },
 };
@@ -280,13 +330,23 @@ export default {
 .dish-price {
   color: #f0c42d;
 }
+#help-btn {
+  font-size: 26px;
+  color: #f0c42d;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 2;
+  cursor: pointer;
+}
 
-.order-page {
+.order-page,
+.dish-guide {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 2;
+  z-index: 99;
 }
 .overlay {
   position: fixed;
@@ -295,7 +355,7 @@ export default {
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.4);
-  z-index: 1;
+  z-index: 98;
 }
 
 .slide-enter-active,

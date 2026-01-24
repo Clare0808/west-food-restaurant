@@ -20,14 +20,21 @@
 
 <script>
 import { ref } from "vue";
-import { orderList, showOrderPage } from "../components/MenuPage.vue";
+import {
+  orderList,
+  showOrderPage,
+  showCartGuide,
+} from "../components/MenuPage.vue";
 import { errorText, errorType } from "../components/LoginPage.vue";
+import { useUserStore } from "@/store/user";
 
 export const dishAmount = ref(1);
 export const showErrorMsg = ref(false);
 
 export default {
   setup() {
+    const userStore = useUserStore();
+
     const CountDishAmount = (operator) => {
       if (operator === "+") {
         dishAmount.value += 1;
@@ -66,12 +73,21 @@ export default {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+
+      const userMail = localStorage.getItem("userEmail");
+
+      const responseData = await userStore.init(userMail);
+
+      if (!responseData.putInCartClicked) {
+        showCartGuide.value = true;
+      }
     };
 
     return {
       orderList,
       showOrderPage,
       showErrorMsg,
+      showCartGuide,
       errorText,
       errorType,
       dishAmount,

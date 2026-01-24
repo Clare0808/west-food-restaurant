@@ -68,6 +68,12 @@
     </transition>
   </div>
 
+  <i
+    class="fa-regular fa-circle-question"
+    id="help-btn"
+    @click="showOrderGuide = true"
+  ></i>
+
   <div class="overlay" v-show="showCheck" @click="showCheck = false"></div>
   <transition name="slide-check">
     <CheckOrder class="check-page" v-if="showCheck" />
@@ -75,6 +81,16 @@
 
   <transition name="slide-check">
     <LoadingEle v-if="showLoader" />
+  </transition>
+
+  <div class="overlay" @click="CloseOrderGuide" v-if="showOrderGuide"></div>
+  <transition name="slide-check">
+    <OrderClickGuide class="order-guide" v-if="showOrderGuide" />
+  </transition>
+
+  <div class="overlay" @click="CloseBuyGuide" v-if="showBuyGuide"></div>
+  <transition name="slide-check">
+    <BuyClickGuide class="order-guide" v-if="showBuyGuide" />
   </transition>
 </template>
 
@@ -90,8 +106,12 @@ import {
 } from "../components/CheckOrder.vue";
 import LoadingEle from "./LoadingEle.vue";
 import { showMobile } from "../App.vue";
+import OrderClickGuide from "../components/guide/orderClick.vue";
+import BuyClickGuide from "../components/guide/buyClick.vue";
+import { useUserStore } from "@/store/user";
 
 export const buyList = ref({});
+export const showBuyGuide = ref(false);
 
 export default {
   name: "CartPage",
@@ -99,6 +119,8 @@ export default {
     CheckOrder,
     ErrorMessage,
     LoadingEle,
+    OrderClickGuide,
+    BuyClickGuide,
   },
   setup() {
     const dishAmount = ref(0);
@@ -108,6 +130,9 @@ export default {
     const check = ref(false);
     const totalPrice = ref(0);
     const selectAllClick = ref(false);
+    const showOrderGuide = ref(false);
+
+    const userStore = useUserStore();
 
     const CountDishAmount = (operator, index) => {
       const order = filteredData.value[index];
@@ -270,6 +295,61 @@ export default {
       }
     };
 
+    const HandleGuide = async () => {
+      const userMail = localStorage.getItem("userEmail");
+
+      const responseData = await userStore.init(userMail);
+
+      if (!responseData.orderClicked) {
+        showOrderGuide.value = true;
+      }
+    };
+
+    const CloseOrderGuide = async () => {
+      const userMail = localStorage.getItem("userEmail");
+
+      const responseData = await userStore.init(userMail);
+
+      if (showOrderGuide.value) {
+        showOrderGuide.value = false;
+
+        userStore.modifyUserData(responseData.id, "orderClicked", true);
+      }
+    };
+
+    const CloseBuyGuide = async () => {
+      const userMail = localStorage.getItem("userEmail");
+
+      const responseData = await userStore.init(userMail);
+
+      if (showBuyGuide.value) {
+        showBuyGuide.value = false;
+
+        userStore.modifyUserData(responseData.id, "buyClicked", true);
+
+        localStorage.setItem("showBuyClickedGuide", "false");
+      }
+    };
+
+    const ExamBuyGuide = async () => {
+      const userMail = localStorage.getItem("userEmail");
+
+      const responseData = await userStore.init(userMail);
+
+      const tempShowBuyGuide = localStorage.getItem("showBuyClickedGuide");
+
+      if (tempShowBuyGuide === "true") {
+        if (!responseData.buyClicked) {
+          const tempBuyClicked = localStorage.getItem("buyClicked");
+          if (tempBuyClicked === "true") {
+            showBuyGuide.value = true;
+          } else {
+            showBuyGuide.value = false;
+          }
+        }
+      }
+    };
+
     onMounted(async () => {
       showFade.value = true;
       showSlide.value = true;
@@ -280,6 +360,10 @@ export default {
       await GetOrderData();
 
       EmpltCart();
+
+      await HandleGuide();
+
+      await ExamBuyGuide();
     });
 
     return {
@@ -297,6 +381,8 @@ export default {
       buyList,
       totalPrice,
       selectAllClick,
+      showOrderGuide,
+      showBuyGuide,
       CountDishAmount,
       GetOrderData,
       ClickBuy,
@@ -305,6 +391,10 @@ export default {
       RemoveOrder,
       RemoveAllOrder,
       SelectAll,
+      HandleGuide,
+      CloseOrderGuide,
+      CloseBuyGuide,
+      ExamBuyGuide,
     };
   },
 };
@@ -324,7 +414,7 @@ export default {
   position: fixed;
   top: 80px;
   right: 20px;
-  z-index: 2;
+  z-index: 100;
 }
 .title {
   color: #f0c42d;
@@ -493,13 +583,23 @@ img {
   cursor: pointer;
   transform: scale(1.1);
 }
+#help-btn {
+  font-size: 26px;
+  color: #f0c42d;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 2;
+  cursor: pointer;
+}
 
-.check-page {
+.check-page,
+.order-guide {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 2;
+  z-index: 99;
 }
 .overlay {
   position: fixed;
@@ -508,7 +608,7 @@ img {
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.4);
-  z-index: 1;
+  z-index: 98;
 }
 
 .slide-enter-active,

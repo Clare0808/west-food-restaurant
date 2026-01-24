@@ -18,7 +18,11 @@ router.post("/now-login", async (req, res) => {
     res.json({
         success: true,
         user: { 
+            id: user._id,
             dishClicked: user.dishClicked,
+            putInCartClicked: user.putInCartClicked,
+            orderClicked: user.orderClicked,
+            buyClicked: user.buyClicked,
         }
     })
 })
