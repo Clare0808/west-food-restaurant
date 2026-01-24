@@ -67,7 +67,11 @@ export default {
       const queEle = document.querySelectorAll(".box-frame")[index];
 
       if (questionData.value[index].show) {
-        queEle.style.marginBottom = "110px";
+        if (window.innerWidth <= 500) {
+          queEle.style.marginBottom = "140px";
+        } else {
+          queEle.style.marginBottom = "110px";
+        }
       } else {
         queEle.style.marginBottom = "20px";
       }
@@ -143,13 +147,14 @@ export default {
   color: #f0c42d;
   font-size: 26px;
   font-weight: bold;
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 .icon:hover {
   color: #ffffff;
 }
 .answer-box {
-  width: calc(100% - 2px);
+  width: calc(95% - 2px);
   background-color: #ffffff;
   border: 1px solid #f0c42d;
   border-bottom-left-radius: 20px;
@@ -291,6 +296,10 @@ export default {
 @media (max-width: 500px) {
   .question-box {
     width: 90%;
+  }
+  .answer-box {
+    width: calc(90% - 2px);
+    top: 120px;
   }
 }
 </style>
