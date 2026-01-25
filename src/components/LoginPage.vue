@@ -107,6 +107,7 @@ export default {
 
               localStorage.setItem("userEmail", email.value);
               localStorage.setItem("userName", name.value);
+              localStorage.setItem("inAdmin", userStore.isAdmin);
 
               CleanInput();
 

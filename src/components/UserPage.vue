@@ -26,7 +26,7 @@
                   @click="ClickModify('number')"
                 ></i>
               </div>
-              <div class="btn" @click="ClickBack" v-show="userStore.isAdmin">
+              <div class="btn" @click="ClickBack" v-show="isAdmin">
                 進入後台
               </div>
             </div>
@@ -97,6 +97,7 @@ export default {
     const userName = ref("");
     const userNumber = ref("");
     const showNonContent = ref(false);
+    const isAdmin = ref(false);
 
     const router = useRouter();
     const userStore = useUserStore();
@@ -142,6 +143,9 @@ export default {
 
       showMobile.value = false;
 
+      isAdmin.value = localStorage.getItem("inAdmin");
+      console.log(isAdmin.value);
+
       await GetOrderData();
       await GetUserInfo();
     });
@@ -161,6 +165,7 @@ export default {
       showModify,
       showNonContent,
       userStore,
+      isAdmin,
       GetOrderData,
       GetUserInfo,
       ClickModify,
