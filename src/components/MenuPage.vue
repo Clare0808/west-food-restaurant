@@ -51,17 +51,26 @@
   <i
     class="fa-regular fa-circle-question"
     id="help-btn"
-    @click="showDishClickGuide = true"
+    @click="showMenuGuide = true"
   ></i>
 
   <div class="overlay" @click="CloseDishGuide" v-if="showDishClickGuide"></div>
-  <transition name="slide-order">
+  <transition name="slide-guide">
     <DishClickGuide class="dish-guide" v-if="showDishClickGuide" />
   </transition>
 
   <div class="overlay" @click="CloseCartGuide" v-if="showCartGuide"></div>
-  <transition name="slide-order">
+  <transition name="slide-guide">
     <PutInCartGuide class="dish-guide" v-if="showCartGuide" />
+  </transition>
+
+  <div
+    class="overlay"
+    @click="showMenuGuide = false"
+    v-if="showMenuGuide"
+  ></div>
+  <transition name="slide-guide">
+    <MenuGuide class="menu-guide" v-if="showMenuGuide" />
   </transition>
 </template>
 
@@ -77,6 +86,7 @@ import { showMobile } from "../App.vue";
 import { useUserStore } from "@/store/user";
 import DishClickGuide from "./guide/dishClick.vue";
 import PutInCartGuide from "./guide/putInCartClick.vue";
+import MenuGuide from "./guide/menuGuide.vue";
 
 export const orderList = ref({});
 export const showOrderPage = ref(false);
@@ -89,6 +99,7 @@ export default {
     ErrorMessage,
     DishClickGuide,
     PutInCartGuide,
+    MenuGuide,
   },
   setup() {
     const dishList = ref([]);
@@ -97,6 +108,7 @@ export default {
     const showElement = ref(false);
     const OptionsData = ref(OptionsDataRaw); // 修正成 reactive 狀態
     const showDishClickGuide = ref(false);
+    const showMenuGuide = ref(false);
 
     const router = useRouter();
     const userStore = useUserStore();
@@ -225,6 +237,7 @@ export default {
       showText,
       showElement,
       showDishClickGuide,
+      showMenuGuide,
       ClickOptions,
       ClickDish,
       HandleGuide,
@@ -341,7 +354,8 @@ export default {
 }
 
 .order-page,
-.dish-guide {
+.dish-guide,
+.menu-guide {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -411,6 +425,20 @@ export default {
 .x-slide-leave-from {
   opacity: 1;
   transform: translateX(0);
+}
+.slide-guide-enter-active,
+.slide-guide-leave-active {
+  transition: all 1s ease;
+}
+.slide-guide-enter-from,
+.slide-guide-leave-to {
+  opacity: 0;
+  transform: translateX(-100%) translate(-50%, -50%);
+}
+.slide-guide-enter-to,
+.slide-guide-leave-from {
+  opacity: 1;
+  transform: translateX(0) translate(-50%, -50%);
 }
 
 @media (max-width: 1250px) {

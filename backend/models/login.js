@@ -11,6 +11,8 @@ const LoginSchema = new mongoose.Schema({
   putInCartClicked: { type: Boolean, default: false },
   orderClicked: { type: Boolean, default: false},
   buyClicked: { type: Boolean, default: false},
+  reviewClicked: { type: Boolean, default: false},
+  serverClicked: { type: Boolean, default: false},
 })
 
 module.exports = mongoose.model("Login", LoginSchema)

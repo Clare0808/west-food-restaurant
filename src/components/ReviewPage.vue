@@ -34,6 +34,12 @@
       <div class="add-btn" @click="ClickAdd" v-if="showFade">+</div>
     </transition>
 
+    <i
+      class="fa-regular fa-circle-question"
+      id="help-btn"
+      @click="showReviewGuide = true"
+    ></i>
+
     <div
       class="overlay"
       v-show="showWriteReview"
@@ -46,6 +52,11 @@
 
   <transition name="slide-loader">
     <LoadingEle v-if="showLoader" />
+  </transition>
+
+  <div class="overlay" @click="CloseGuide" v-if="showReviewGuide"></div>
+  <transition name="slide-guide">
+    <ReviewGuide class="review-guide" v-if="showReviewGuide" />
   </transition>
 </template>
 
@@ -63,6 +74,7 @@ import ErrorMessage from "./ErrorMessage.vue";
 import LoadingEle from "./LoadingEle.vue";
 import { showMobile } from "../App.vue";
 import { useUserStore } from "@/store/user";
+import ReviewGuide from "../components/guide/reviewClick.vue";
 
 export default {
   name: "ReviewPage",
@@ -70,12 +82,14 @@ export default {
     WriteReview,
     ErrorMessage,
     LoadingEle,
+    ReviewGuide,
   },
   setup() {
     const showSlide = ref(false);
     const showFade = ref(false);
     const reviewData = ref(false);
     const showNonContent = ref(false);
+    const showReviewGuide = ref(false);
 
     const router = useRouter();
     const userStore = useUserStore();
@@ -117,6 +131,28 @@ export default {
       }
     };
 
+    const HandleGuide = async () => {
+      const userMail = localStorage.getItem("userEmail");
+
+      const responseData = await userStore.init(userMail);
+
+      if (!responseData.reviewClicked) {
+        showReviewGuide.value = true;
+      }
+    };
+
+    const CloseGuide = async () => {
+      const userMail = localStorage.getItem("userEmail");
+
+      const responseData = await userStore.init(userMail);
+
+      if (showReviewGuide.value) {
+        showReviewGuide.value = false;
+
+        userStore.modifyUserData(responseData.id, "reviewClicked", true);
+      }
+    };
+
     onMounted(async () => {
       showSlide.value = true;
       showFade.value = true;
@@ -127,6 +163,8 @@ export default {
       await GetReview();
 
       ExamPage();
+
+      await HandleGuide();
     });
 
     return {
@@ -140,9 +178,12 @@ export default {
       showFade,
       reviewData,
       showNonContent,
+      showReviewGuide,
       GetReview,
       ExamPage,
       ClickAdd,
+      HandleGuide,
+      CloseGuide,
     };
   },
 };
@@ -232,13 +273,23 @@ export default {
   cursor: pointer;
   transform: scale(1.1);
 }
+#help-btn {
+  font-size: 26px;
+  color: #f0c42d;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 2;
+  cursor: pointer;
+}
 
-.write-review {
+.write-review,
+.review-guide {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 2;
+  z-index: 99;
 }
 .overlay {
   position: fixed;
@@ -247,7 +298,7 @@ export default {
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.4);
-  z-index: 1;
+  z-index: 98;
 }
 
 .slide-enter-active,
@@ -317,6 +368,20 @@ export default {
 .slide-loader-leave-from {
   opacity: 1;
   transform: translate(-50%, -50%) translateY(0);
+}
+.slide-guide-enter-active,
+.slide-guide-leave-active {
+  transition: all 1s ease;
+}
+.slide-guide-enter-from,
+.slide-guide-leave-to {
+  opacity: 0;
+  transform: translateX(-100%) translate(-50%, -50%);
+}
+.slide-guide-enter-to,
+.slide-guide-leave-from {
+  opacity: 1;
+  transform: translateX(0) translate(-50%, -50%);
 }
 
 @media (max-width: 1130px) {

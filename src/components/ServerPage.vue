@@ -27,6 +27,12 @@
 
   <i class="fa-regular fa-message" id="contact" @click="showContact = true"></i>
 
+  <i
+    class="fa-regular fa-circle-question"
+    id="help-btn"
+    @click="showServerGuide = true"
+  ></i>
+
   <div class="overlay" v-show="showContact" @click="showContact = false"></div>
   <transition name="slide-contact">
     <ContactServer class="contact-ele" v-show="showContact" />
@@ -34,6 +40,11 @@
 
   <transition name="slide-loader">
     <LoadingEle v-if="showLoader" />
+  </transition>
+
+  <div class="overlay" @click="CloseGuide" v-if="showServerGuide"></div>
+  <transition name="slide-guide">
+    <ServerGuide class="server-guide" v-if="showServerGuide" />
   </transition>
 </template>
 
@@ -44,6 +55,8 @@ import ContactServer from "./ContactServer.vue";
 import ErrorMessage from "./ErrorMessage.vue";
 import LoadingEle from "./LoadingEle.vue";
 import { showMobile } from "../App.vue";
+import ServerGuide from "./guide/serverClick.vue";
+import { useUserStore } from "@/store/user";
 
 export const showContact = ref(false);
 export const showErrorMsg = ref(false);
@@ -55,11 +68,15 @@ export default {
     ContactServer,
     ErrorMessage,
     LoadingEle,
+    ServerGuide,
   },
   setup() {
     const questionData = ref(QuestionDataRaw);
     const showSlide = ref(false);
     const showFade = ref(false);
+    const showServerGuide = ref(false);
+
+    const userStore = useUserStore();
 
     const HandleShowAnswer = (index) => {
       questionData.value[index].show = !questionData.value[index].show;
@@ -77,11 +94,35 @@ export default {
       }
     };
 
-    onMounted(() => {
+    const HandleGuide = async () => {
+      const userMail = localStorage.getItem("userEmail");
+
+      const responseData = await userStore.init(userMail);
+
+      if (!responseData.serverClicked) {
+        showServerGuide.value = true;
+      }
+    };
+
+    const CloseGuide = async () => {
+      const userMail = localStorage.getItem("userEmail");
+
+      const responseData = await userStore.init(userMail);
+
+      if (showServerGuide.value) {
+        showServerGuide.value = false;
+
+        userStore.modifyUserData(responseData.id, "serverClicked", true);
+      }
+    };
+
+    onMounted(async () => {
       showSlide.value = true;
       showFade.value = true;
 
       showMobile.value = false;
+
+      await HandleGuide();
     });
 
     return {
@@ -93,7 +134,10 @@ export default {
       questionData,
       showSlide,
       showFade,
+      showServerGuide,
       HandleShowAnswer,
+      HandleGuide,
+      CloseGuide,
     };
   },
 };
@@ -192,6 +236,15 @@ export default {
   cursor: pointer;
   transform: scale(1.1);
 }
+#help-btn {
+  font-size: 26px;
+  color: #f0c42d;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 2;
+  cursor: pointer;
+}
 
 .overlay {
   position: fixed;
@@ -200,14 +253,15 @@ export default {
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.4);
-  z-index: 1;
+  z-index: 98;
 }
-.contact-ele {
+.contact-ele,
+.server-guide {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 2;
+  z-index: 99;
 }
 
 .slide-enter-active,
@@ -291,6 +345,20 @@ export default {
 .slide-loader-leave-from {
   opacity: 1;
   transform: translate(-50%, -50%) translateY(0);
+}
+.slide-guide-enter-active,
+.slide-guide-leave-active {
+  transition: all 1s ease;
+}
+.slide-guide-enter-from,
+.slide-guide-leave-to {
+  opacity: 0;
+  transform: translateX(-100%) translate(-50%, -50%);
+}
+.slide-guide-enter-to,
+.slide-guide-leave-from {
+  opacity: 1;
+  transform: translateX(0) translate(-50%, -50%);
 }
 
 @media (max-width: 500px) {

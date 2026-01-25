@@ -116,7 +116,7 @@ img {
   margin-top: 15px;
 }
 #pointer {
-  color: #d0d0d0;
+  color: #f0c42d;
   font-size: 35px;
   position: absolute;
   bottom: 30px;
@@ -131,7 +131,7 @@ img {
 
 @keyframes movePointer {
   from {
-    color: #272727;
+    color: #ffea9d;
     transform: translateX(0px) translateY(0px);
   }
   to {

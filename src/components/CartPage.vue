@@ -71,7 +71,7 @@
   <i
     class="fa-regular fa-circle-question"
     id="help-btn"
-    @click="showOrderGuide = true"
+    @click="showCartGuide = true"
   ></i>
 
   <div class="overlay" v-show="showCheck" @click="showCheck = false"></div>
@@ -84,13 +84,22 @@
   </transition>
 
   <div class="overlay" @click="CloseOrderGuide" v-if="showOrderGuide"></div>
-  <transition name="slide-check">
+  <transition name="slide-guide">
     <OrderClickGuide class="order-guide" v-if="showOrderGuide" />
   </transition>
 
   <div class="overlay" @click="CloseBuyGuide" v-if="showBuyGuide"></div>
-  <transition name="slide-check">
+  <transition name="slide-guide">
     <BuyClickGuide class="order-guide" v-if="showBuyGuide" />
+  </transition>
+
+  <div
+    class="overlay"
+    @click="showCartGuide = false"
+    v-if="showCartGuide"
+  ></div>
+  <transition name="slide-guide">
+    <CartGuide class="cart-guide" v-if="showCartGuide" />
   </transition>
 </template>
 
@@ -109,6 +118,7 @@ import { showMobile } from "../App.vue";
 import OrderClickGuide from "../components/guide/orderClick.vue";
 import BuyClickGuide from "../components/guide/buyClick.vue";
 import { useUserStore } from "@/store/user";
+import CartGuide from "../components/guide/cartGuide.vue";
 
 export const buyList = ref({});
 export const showBuyGuide = ref(false);
@@ -121,6 +131,7 @@ export default {
     LoadingEle,
     OrderClickGuide,
     BuyClickGuide,
+    CartGuide,
   },
   setup() {
     const dishAmount = ref(0);
@@ -131,6 +142,7 @@ export default {
     const totalPrice = ref(0);
     const selectAllClick = ref(false);
     const showOrderGuide = ref(false);
+    const showCartGuide = ref(false);
 
     const userStore = useUserStore();
 
@@ -383,6 +395,7 @@ export default {
       selectAllClick,
       showOrderGuide,
       showBuyGuide,
+      showCartGuide,
       CountDishAmount,
       GetOrderData,
       ClickBuy,
@@ -414,7 +427,7 @@ export default {
   position: fixed;
   top: 80px;
   right: 20px;
-  z-index: 100;
+  z-index: 98;
 }
 .title {
   color: #f0c42d;
@@ -589,12 +602,13 @@ img {
   position: fixed;
   bottom: 20px;
   left: 20px;
-  z-index: 2;
+  z-index: 1;
   cursor: pointer;
 }
 
 .check-page,
-.order-guide {
+.order-guide,
+.cart-guide {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -664,6 +678,20 @@ img {
 .x-slide-leave-from {
   opacity: 1;
   transform: translateX(0);
+}
+.slide-guide-enter-active,
+.slide-guide-leave-active {
+  transition: all 1s ease;
+}
+.slide-guide-enter-from,
+.slide-guide-leave-to {
+  opacity: 0;
+  transform: translateX(-100%) translate(-50%, -50%);
+}
+.slide-guide-enter-to,
+.slide-guide-leave-from {
+  opacity: 1;
+  transform: translateX(0) translate(-50%, -50%);
 }
 
 @media (max-width: 700px) {

@@ -23,6 +23,8 @@ router.post("/now-login", async (req, res) => {
             putInCartClicked: user.putInCartClicked,
             orderClicked: user.orderClicked,
             buyClicked: user.buyClicked,
+            reviewClicked: user.reviewClicked,
+            serverClicked: user.serverClicked
         }
     })
 })
@@ -85,6 +87,19 @@ router.post("/login", async (req, res) => {
         message: "登入成功", 
         user: { email: user.email, name: user.name, role: user.role }, 
         token: token 
+    })
+})
+
+router.post("/remove-user", async (req, res) => {
+    const { list } = req.body
+
+    for (let i = 0; i < list.length; i ++) {
+        await Login.findByIdAndDelete(list[i])
+    }
+
+    res.json({
+        success: true,
+        message: "用戶已刪除",
     })
 })
 
