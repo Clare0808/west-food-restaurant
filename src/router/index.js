@@ -12,6 +12,7 @@ import BackOrder from "../components/backstage/OrderPage.vue";
 import BackReview from "../components/backstage/ReviewPage.vue";
 import BackChart from "../components/backstage/ChartPage.vue";
 import BackContact from "../components/backstage/ServerPage.vue";
+import BackUser from "../components/backstage/UserPage.vue";
 
 const routes = [
   {
@@ -78,6 +79,11 @@ const routes = [
         path: "/back-contact",
         name: "BackContact",
         component: BackContact,
+      },
+      {
+        path: "/back-user",
+        name: "BackUser",
+        component: BackUser,
       },
     ],
   },
