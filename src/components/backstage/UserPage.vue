@@ -6,7 +6,7 @@
           <div class="user-info">{{ user.name }}</div>
           <div class="user-info">{{ user.email }}</div>
           <div class="user-info">{{ user.number }}</div>
-          <div class="user-info">{{ user.role }}</div>
+          <div class="user-info">{{ GetRoleText(user.role) }}</div>
         </div>
         <div class="btn-frame">
           <i class="fa-solid fa-pencil" @click="HandleModify(index)"></i>
@@ -14,6 +14,11 @@
         </div>
       </div>
     </div>
+
+    <div class="overlay" v-if="showModify" @click="showModify = false"></div>
+    <transition name="slide-child">
+      <ModifyUser class="modify-ele" v-if="showModify" />
+    </transition>
   </div>
 </template>
 
@@ -23,9 +28,16 @@ import {
   removeData,
   showCheckEle,
 } from "../../components/backstage/ReviewPage.vue";
+import ModifyUser from "./ModifyUser.vue";
+
+export const showModify = ref(false);
+export const modifyUser = ref({});
 
 export default {
   name: "BackUser",
+  components: {
+    ModifyUser,
+  },
   setup() {
     const userList = ref([]);
 
@@ -34,6 +46,19 @@ export default {
       const data = await response.json();
 
       userList.value = data;
+    };
+
+    const GetRoleText = (role) => {
+      if (role === "admin") return "管理者";
+      if (role === "user") return "使用者";
+    };
+
+    const HandleModify = (index) => {
+      showModify.value = true;
+
+      modifyUser.value.id = userList.value[index]._id;
+      modifyUser.value.user = userList.value[index].name;
+      modifyUser.value.role = userList.value[index].role;
     };
 
     const ShowCheckEle = (index) => {
@@ -48,8 +73,11 @@ export default {
     });
 
     return {
+      showModify,
       userList,
       GetUserInfo,
+      GetRoleText,
+      HandleModify,
       ShowCheckEle,
     };
   },
@@ -67,6 +95,8 @@ export default {
 }
 .info-outframe {
   width: 95%;
+  padding-right: 40px;
+  overflow-y: auto;
 }
 .info-frame {
   width: 100%;
@@ -103,5 +133,37 @@ export default {
 .btn-frame i:hover {
   color: #272727;
   cursor: pointer;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+.modify-ele {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.slide-child-enter-active,
+.slide-child-leave-active {
+  transition: all 1s ease;
+}
+.slide-child-enter-from,
+.slide-child-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -50%) translateY(20px);
+}
+.slide-child-enter-to,
+.slide-child-leave-from {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0);
 }
 </style>
