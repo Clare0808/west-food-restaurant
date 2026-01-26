@@ -1,8 +1,5 @@
 <template>
   <div class="server-page">
-    <transition name="x-slide">
-      <ErrorMessage class="error-msg" v-show="showErrorMsg" />
-    </transition>
     <transition name="fade">
       <div class="title" v-if="showFade">常見問題</div>
     </transition>
@@ -38,10 +35,6 @@
     <ContactServer class="contact-ele" v-show="showContact" />
   </transition>
 
-  <transition name="slide-loader">
-    <LoadingEle v-if="showLoader" />
-  </transition>
-
   <div class="overlay" @click="CloseGuide" v-if="showServerGuide"></div>
   <transition name="slide-guide">
     <ServerGuide class="server-guide" v-if="showServerGuide" />
@@ -50,24 +43,21 @@
 
 <script>
 import { ref, onMounted } from "vue";
-import QuestionDataRaw from "../assets/data/questionData.json";
-import ContactServer from "./ContactServer.vue";
-import ErrorMessage from "./ErrorMessage.vue";
-import LoadingEle from "./LoadingEle.vue";
-import { showMobile } from "../App.vue";
-import ServerGuide from "./guide/serverClick.vue";
+
 import { useUserStore } from "@/store/user";
 
+import QuestionDataRaw from "../assets/data/questionData.json";
+import ContactServer from "./ContactServer.vue";
+import ServerGuide from "./guide/serverClick.vue";
+
+import { showMobile } from "../App.vue";
+
 export const showContact = ref(false);
-export const showErrorMsg = ref(false);
-export const showLoader = ref(false);
 
 export default {
   name: "ServerPage",
   components: {
     ContactServer,
-    ErrorMessage,
-    LoadingEle,
     ServerGuide,
   },
   setup() {
@@ -128,8 +118,6 @@ export default {
     return {
       QuestionDataRaw,
       showContact,
-      showErrorMsg,
-      showLoader,
       showMobile,
       questionData,
       showSlide,
@@ -151,12 +139,6 @@ export default {
   justify-content: start;
   align-items: center;
   position: relative;
-}
-.error-msg {
-  position: fixed;
-  top: 80px;
-  right: 20px;
-  z-index: 2;
 }
 .title {
   color: #f0c42d;
@@ -315,34 +297,6 @@ export default {
 }
 .slide-contact-enter-to,
 .slide-contact-leave-from {
-  opacity: 1;
-  transform: translate(-50%, -50%) translateY(0);
-}
-.x-slide-enter-active,
-.x-slide-leave-active {
-  transition: all 1s ease;
-}
-.x-slide-enter-from,
-.x-slide-leave-to {
-  opacity: 0;
-  transform: translateX(20px);
-}
-.x-slide-enter-to,
-.x-slide-leave-from {
-  opacity: 1;
-  transform: translateX(0);
-}
-.slide-loader-enter-active,
-.slide-loader-leave-active {
-  transition: all 1s ease;
-}
-.slide-loader-enter-from,
-.slide-loader-leave-to {
-  opacity: 0;
-  transform: translate(-50%, -50%) translateY(20px);
-}
-.slide-loader-enter-to,
-.slide-loader-leave-from {
   opacity: 1;
   transform: translate(-50%, -50%) translateY(0);
 }

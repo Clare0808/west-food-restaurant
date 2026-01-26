@@ -1,8 +1,5 @@
 <template>
   <div class="cart-page">
-    <transition name="x-slide">
-      <ErrorMessage class="error-msg" v-show="showErrorMsg" />
-    </transition>
     <transition name="fade">
       <div class="title" v-if="showFade">購物車</div>
     </transition>
@@ -79,10 +76,6 @@
     <CheckOrder class="check-page" v-if="showCheck" />
   </transition>
 
-  <transition name="slide-check">
-    <LoadingEle v-if="showLoader" />
-  </transition>
-
   <div class="overlay" @click="CloseOrderGuide" v-if="showOrderGuide"></div>
   <transition name="slide-guide">
     <OrderClickGuide class="order-guide" v-if="showOrderGuide" />
@@ -105,20 +98,17 @@
 
 <script>
 import { ref, onMounted } from "vue";
+
+import { useUserStore } from "@/store/user";
+import { errorUiStore } from "@/store/error";
+
 import CheckOrder from "./CheckOrder.vue";
-import ErrorMessage from "./ErrorMessage.vue";
-import { errorText, errorType } from "../components/LoginPage.vue";
-import {
-  showErrorMsg,
-  showCheck,
-  showLoader,
-} from "../components/CheckOrder.vue";
-import LoadingEle from "./LoadingEle.vue";
-import { showMobile } from "../App.vue";
 import OrderClickGuide from "../components/guide/orderClick.vue";
 import BuyClickGuide from "../components/guide/buyClick.vue";
-import { useUserStore } from "@/store/user";
 import CartGuide from "../components/guide/cartGuide.vue";
+
+import { showCheck } from "../components/CheckOrder.vue";
+import { showMobile } from "../App.vue";
 
 export const buyList = ref({});
 export const showBuyGuide = ref(false);
@@ -127,8 +117,6 @@ export default {
   name: "CartPage",
   components: {
     CheckOrder,
-    ErrorMessage,
-    LoadingEle,
     OrderClickGuide,
     BuyClickGuide,
     CartGuide,
@@ -145,6 +133,7 @@ export default {
     const showCartGuide = ref(false);
 
     const userStore = useUserStore();
+    const errorStore = errorUiStore();
 
     const CountDishAmount = (operator, index) => {
       const order = filteredData.value[index];
@@ -173,8 +162,6 @@ export default {
       const userMail = localStorage.getItem("userEmail");
 
       filteredData.value = data.filter((order) => order.email === userMail);
-
-      console.log(filteredData.value);
     };
 
     const ClickBuy = () => {
@@ -183,14 +170,8 @@ export default {
       );
 
       if (buyList.value.length === 0) {
-        errorText.value = "請選擇商品進行結帳!";
-        errorType.value = true;
-
-        showErrorMsg.value = true;
-
-        setTimeout(() => {
-          showErrorMsg.value = false;
-        }, 2000);
+        errorStore.SetError("請選擇商品進行結帳!");
+        errorStore.CloseEle();
       } else {
         showCheck.value = true;
       }
@@ -206,10 +187,8 @@ export default {
 
     const EmpltCart = () => {
       if (filteredData.value.length === 0) {
-        errorText.value = "購物車是空的!";
-        errorType.value = true;
-
-        showErrorMsg.value = true;
+        errorStore.SetError("購物車是空的!");
+        errorStore.CloseEle();
 
         const cartEle = document.querySelector(".cart-page");
         cartEle.style.height = "72vh";
@@ -219,7 +198,7 @@ export default {
         btnEle.style.backgroundColor = "#ffea9d";
         btnEle.style.cursor = "not-allowed";
       } else {
-        showErrorMsg.value = false;
+        errorStore.showErrorMsg = false;
       }
 
       if (filteredData.value.length === 1) {
@@ -243,16 +222,10 @@ export default {
         throw new Error("Network response was not ok");
       }
 
-      errorText.value = "餐點刪除成功!";
-      errorType.value = false;
-      showErrorMsg.value = true;
+      errorStore.LoadSuccess("餐點刪除成功!");
 
-      setTimeout(() => {
-        showErrorMsg.value = false;
-
-        showLoader.value = true;
-        window.location.reload();
-      }, 2000);
+      await errorStore.CloseLoadEle();
+      window.location.reload();
     };
 
     const RemoveAllOrder = async () => {
@@ -276,17 +249,10 @@ export default {
         throw new Error("Network response was not ok");
       }
 
-      errorText.value = "餐點已全數刪除!";
-      errorType.value = false;
-      showErrorMsg.value = true;
+      errorStore.LoadSuccess("餐點已全數刪除!");
 
-      showLoader.value = true;
-
-      setTimeout(() => {
-        showErrorMsg.value = false;
-
-        window.location.reload();
-      }, 2000);
+      await errorStore.CloseLoadEle();
+      window.location.reload();
     };
 
     const SelectAll = () => {
@@ -365,8 +331,6 @@ export default {
     onMounted(async () => {
       showFade.value = true;
       showSlide.value = true;
-
-      showLoader.value = false;
       showMobile.value = false;
 
       await GetOrderData();
@@ -379,11 +343,7 @@ export default {
     });
 
     return {
-      errorText,
-      errorType,
-      showErrorMsg,
       showCheck,
-      showLoader,
       showMobile,
       dishAmount,
       showFade,
@@ -422,12 +382,6 @@ export default {
   justify-content: start;
   align-items: center;
   position: relative;
-}
-.error-msg {
-  position: fixed;
-  top: 80px;
-  right: 20px;
-  z-index: 98;
 }
 .title {
   color: #f0c42d;
@@ -664,20 +618,6 @@ img {
 .slide-check-leave-from {
   opacity: 1;
   transform: translate(-50%, -50%) translateY(0);
-}
-.x-slide-enter-active,
-.x-slide-leave-active {
-  transition: all 1s ease;
-}
-.x-slide-enter-from,
-.x-slide-leave-to {
-  opacity: 0;
-  transform: translateX(20px);
-}
-.x-slide-enter-to,
-.x-slide-leave-from {
-  opacity: 1;
-  transform: translateX(0);
 }
 .slide-guide-enter-active,
 .slide-guide-leave-active {

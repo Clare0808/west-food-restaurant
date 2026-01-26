@@ -14,12 +14,7 @@
       <router-link to="/user">
         <i class="fa-solid fa-user"></i>
       </router-link>
-      <router-link to="/login">
-        <i
-          class="fa-solid fa-arrow-right-from-bracket"
-          @click="HandleLogout"
-        ></i>
-      </router-link>
+      <i class="fa-solid fa-arrow-right-from-bracket" @click="HandleLogout"></i>
     </div>
     <i
       class="fa-solid fa-bars"
@@ -40,49 +35,65 @@
     <MobileMenu class="mobile-ele" v-if="showMobile" />
   </transition>
   <router-view />
+
+  <div
+    class="overlay"
+    v-show="showLogoutCheck"
+    @click="showLogoutCheck = false"
+  ></div>
+  <transition name="slide-check">
+    <LogoutCheck class="logout-check" v-if="showLogoutCheck" />
+  </transition>
+
+  <transition name="err-slide">
+    <ErrorMessage class="error-msg" v-show="errorStore.showErrorMsg" />
+  </transition>
+
+  <transition name="slide-check">
+    <LoadingEle v-if="errorStore.showLoader" />
+  </transition>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import {
-  errorText,
-  errorType,
-  showError,
-} from "../src/components/LoginPage.vue";
-import MobileMenu from "../src/components/MobileMenu.vue";
+
 import { useUserStore } from "@/store/user";
+import { errorUiStore } from "@/store/error";
+
+import MobileMenu from "../src/components/MobileMenu.vue";
+import LogoutCheck from "../src/components/LogoutCheck.vue";
+import ErrorMessage from "../src/components/ErrorMessage.vue";
+import LoadingEle from "../src/components/LoadingEle.vue";
 
 export const showMobile = ref(false);
 export const showMobileMenu = ref(false);
+export const showLogoutCheck = ref(false);
 
 export default {
   components: {
     MobileMenu,
+    LogoutCheck,
+    ErrorMessage,
+    LoadingEle,
   },
   setup() {
     const showText = ref(false);
     const showImage = ref(false);
     const router = useRouter();
     const userStore = useUserStore();
+    const errorStore = errorUiStore();
 
     const HandleLogout = () => {
-      userStore.logout();
-      router.push("/login");
+      showLogoutCheck.value = true;
     };
 
-    const ClickServer = () => {
+    const ClickServer = async () => {
       if (!userStore.isAuthenticated) {
+        errorStore.LoadError("請先登入帳號!");
+
+        await errorStore.CloseLoadEle();
         router.push("/login");
-
-        errorText.value = "請先登入帳號!";
-        errorType.value = true;
-
-        showError.value = true;
-
-        setTimeout(() => {
-          showError.value = false;
-        }, 2000);
       } else {
         router.push("/contact");
       }
@@ -95,14 +106,13 @@ export default {
     });
 
     return {
-      errorText,
-      errorType,
-      showError,
       showMobile,
       showMobileMenu,
+      showLogoutCheck,
       showText,
       showImage,
       userStore,
+      errorStore,
       HandleLogout,
       ClickServer,
     };
@@ -182,6 +192,7 @@ nav {
 }
 .icon-frame i:hover {
   color: #f0c42d;
+  cursor: pointer;
   transform: scale(1.1);
 }
 .login-sign-btn {
@@ -228,7 +239,34 @@ nav {
   transform: translate(0%, -50%);
   z-index: 99;
 }
+.logout-check {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 99;
+}
+.error-msg {
+  position: fixed;
+  top: 90px;
+  right: 20px;
+  z-index: 2;
+}
 
+.slide-check-enter-active,
+.slide-check-leave-active {
+  transition: all 1s ease;
+}
+.slide-check-enter-from,
+.slide-check-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -50%) translateY(20px);
+}
+.slide-check-enter-to,
+.slide-check-leave-from {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0);
+}
 .x-slide-enter-active,
 .x-slide-leave-active {
   transition: all 1s ease;
@@ -242,6 +280,20 @@ nav {
 .x-slide-leave-from {
   opacity: 1;
   transform: translateX(0) translate(0%, -50%);
+}
+.err-slide-enter-active,
+.err-slide-leave-active {
+  transition: all 1s ease;
+}
+.err-slide-enter-from,
+.err-slide-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.err-slide-enter-to,
+.err-slide-leave-from {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 @media (max-width: 850px) {

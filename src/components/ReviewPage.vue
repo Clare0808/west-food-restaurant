@@ -1,8 +1,5 @@
 <template>
   <div class="review-page">
-    <transition name="x-slide">
-      <ErrorMessage class="error-msg" v-show="showErrorMsg" />
-    </transition>
     <transition name="fade">
       <div class="title" v-if="showFade">顧客回饋</div>
     </transition>
@@ -50,10 +47,6 @@
     </transition>
   </div>
 
-  <transition name="slide-loader">
-    <LoadingEle v-if="showLoader" />
-  </transition>
-
   <div class="overlay" @click="CloseGuide" v-if="showReviewGuide"></div>
   <transition name="slide-guide">
     <ReviewGuide class="review-guide" v-if="showReviewGuide" />
@@ -62,26 +55,22 @@
 
 <script>
 import { ref, onMounted } from "vue";
+
 import { useRouter } from "vue-router";
-import WriteReview from "./WriteReview.vue";
-import { errorText, errorType } from "../components/LoginPage.vue";
-import {
-  showErrorMsg,
-  showWriteReview,
-  showLoader,
-} from "../components/WriteReview.vue";
-import ErrorMessage from "./ErrorMessage.vue";
-import LoadingEle from "./LoadingEle.vue";
-import { showMobile } from "../App.vue";
+
 import { useUserStore } from "@/store/user";
+import { errorUiStore } from "@/store/error";
+
+import WriteReview from "./WriteReview.vue";
 import ReviewGuide from "../components/guide/reviewClick.vue";
+
+import { showWriteReview } from "../components/WriteReview.vue";
+import { showMobile } from "../App.vue";
 
 export default {
   name: "ReviewPage",
   components: {
     WriteReview,
-    ErrorMessage,
-    LoadingEle,
     ReviewGuide,
   },
   setup() {
@@ -93,13 +82,13 @@ export default {
 
     const router = useRouter();
     const userStore = useUserStore();
+    const errorStore = errorUiStore();
 
     const GetReview = async () => {
       const response = await fetch(`http://localhost:3000/api/get-review`);
       const data = await response.json();
 
       reviewData.value = data;
-      console.log(reviewData.value);
     };
 
     const ExamPage = () => {
@@ -114,20 +103,14 @@ export default {
       }
     };
 
-    const ClickAdd = () => {
+    const ClickAdd = async () => {
       if (userStore.isAuthenticated) {
         showWriteReview.value = true;
       } else {
-        errorText.value = "請先登入帳號!";
-        errorType.value = true;
+        errorStore.LoadError("請先登入帳號!");
 
-        showErrorMsg.value = true;
-
-        setTimeout(() => {
-          showErrorMsg.value = false;
-
-          router.push("/login");
-        }, 2000);
+        await errorStore.CloseLoadEle();
+        router.push("/login");
       }
     };
 
@@ -158,7 +141,6 @@ export default {
       showFade.value = true;
 
       showMobile.value = false;
-      showLoader.value = false;
 
       await GetReview();
 
@@ -168,11 +150,7 @@ export default {
     });
 
     return {
-      errorText,
-      errorType,
-      showErrorMsg,
       showWriteReview,
-      showLoader,
       showMobile,
       showSlide,
       showFade,
@@ -197,12 +175,6 @@ export default {
   justify-content: start;
   align-items: center;
   position: relative;
-}
-.error-msg {
-  position: fixed;
-  top: 80px;
-  right: 20px;
-  z-index: 2;
 }
 .title {
   color: #f0c42d;
@@ -338,34 +310,6 @@ export default {
 }
 .slide-write-review-enter-to,
 .slide-write-review-leave-from {
-  opacity: 1;
-  transform: translate(-50%, -50%) translateY(0);
-}
-.x-slide-enter-active,
-.x-slide-leave-active {
-  transition: all 1s ease;
-}
-.x-slide-enter-from,
-.x-slide-leave-to {
-  opacity: 0;
-  transform: translateX(20px);
-}
-.x-slide-enter-to,
-.x-slide-leave-from {
-  opacity: 1;
-  transform: translateX(0);
-}
-.slide-loader-enter-active,
-.slide-loader-leave-active {
-  transition: all 1s ease;
-}
-.slide-loader-enter-from,
-.slide-loader-leave-to {
-  opacity: 0;
-  transform: translate(-50%, -50%) translateY(20px);
-}
-.slide-loader-enter-to,
-.slide-loader-leave-from {
   opacity: 1;
   transform: translate(-50%, -50%) translateY(0);
 }

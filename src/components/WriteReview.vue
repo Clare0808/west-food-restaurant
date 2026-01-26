@@ -28,11 +28,10 @@
 
 <script>
 import { ref } from "vue";
-import { errorText, errorType } from "../components/LoginPage.vue";
 
-export const showErrorMsg = ref(false);
+import { errorUiStore } from "@/store/error";
+
 export const showWriteReview = ref(false);
-export const showLoader = ref(false);
 
 export default {
   setup() {
@@ -40,6 +39,8 @@ export default {
     const starClick = ref(0);
     const reviewContent = ref("");
     const reviewDate = ref("");
+
+    const errorStore = errorUiStore();
 
     const HandleStarTouch = (index) => {
       for (let i = 0; i < 5; i++) {
@@ -81,18 +82,12 @@ export default {
         throw new Error("Network response was not ok");
       }
 
-      errorText.value = "已成功送出評論!";
-      errorType.value = false;
-      showErrorMsg.value = true;
-
       showWriteReview.value = false;
-      showLoader.value = true;
 
-      setTimeout(() => {
-        showErrorMsg.value = false;
+      errorStore.LoadSuccess("已成功送出評論!");
 
-        window.location.reload();
-      }, 2000);
+      await errorStore.CloseLoadEle();
+      window.location.reload();
     };
 
     const CreateDate = () => {
@@ -106,11 +101,7 @@ export default {
     };
 
     return {
-      errorText,
-      errorType,
-      showErrorMsg,
       showWriteReview,
-      showLoader,
       starTouch,
       starClick,
       reviewContent,

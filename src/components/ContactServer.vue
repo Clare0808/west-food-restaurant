@@ -14,12 +14,10 @@
 
 <script>
 import { ref, onMounted } from "vue";
-import {
-  showContact,
-  showErrorMsg,
-  showLoader,
-} from "../components/ServerPage.vue";
-import { errorText, errorType } from "../components/LoginPage.vue";
+
+import { errorUiStore } from "@/store/error";
+
+import { showContact } from "../components/ServerPage.vue";
 
 export default {
   setup() {
@@ -27,6 +25,8 @@ export default {
     const userMail = ref("");
     const userName = ref("");
     const contentDate = ref("");
+
+    const errorStore = errorUiStore();
 
     const SendContent = async () => {
       CreateDate();
@@ -48,18 +48,12 @@ export default {
         throw new Error("Network response was not ok");
       }
 
-      errorText.value = "成功送出線上客服表單!";
-      errorType.value = false;
-      showErrorMsg.value = true;
-
       showContact.value = false;
-      showLoader.value = true;
 
-      setTimeout(() => {
-        showErrorMsg.value = false;
+      errorStore.LoadSuccess("成功送出線上客服表單!");
 
-        window.location.reload();
-      }, 2000);
+      await errorStore.CloseLoadEle();
+      window.location.reload();
     };
 
     const GetUserInfo = async () => {
@@ -93,10 +87,6 @@ export default {
 
     return {
       showContact,
-      showErrorMsg,
-      showLoader,
-      errorText,
-      errorType,
       content,
       userMail,
       userName,

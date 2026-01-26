@@ -44,12 +44,10 @@
 
 <script>
 import { ref, onMounted } from "vue";
+
+import { errorUiStore } from "@/store/error";
+
 import { showAdd } from "../../components/backstage/MenuPage.vue";
-import { errorText, errorType } from "../../components/LoginPage.vue";
-import {
-  showErrorMsg,
-  showLoader,
-} from "../../components/backstage/ReviewPage.vue";
 
 export default {
   setup() {
@@ -62,10 +60,12 @@ export default {
     const fileInput = ref(null);
     const tempImage = ref(null);
 
+    const errorStore = errorUiStore();
+
     const SendAdd = async () => {
       ExamEmptyInput();
 
-      if (!errorType.value) {
+      if (!errorStore.errorType) {
         const response = await fetch(`http://localhost:3000/api/add-menu`, {
           method: "POST",
           headers: {
@@ -85,23 +85,15 @@ export default {
           throw new Error("Network response was not ok");
         }
 
-        errorText.value = "餐點新增成功!";
-        errorType.value = false;
-        showErrorMsg.value = true;
-
         showAdd.value = false;
-        showLoader.value = true;
 
-        setTimeout(() => {
-          showErrorMsg.value = false;
+        errorStore.LoadSuccess("餐點新增成功!");
 
-          window.location.reload();
-        }, 2000);
+        await errorStore.CloseLoadEle();
+        window.location.reload();
       }
 
-      setTimeout(() => {
-        showErrorMsg.value = false;
-      }, 2000);
+      errorStore.CloseEle();
     };
 
     const CleanInput = () => {
@@ -140,22 +132,19 @@ export default {
     };
 
     const ExamEmptyInput = () => {
-      errorType.value = true;
-      showErrorMsg.value = true;
-
       if (name.value === "") {
-        errorText.value = "餐點名稱尚未填入!";
+        errorStore.SetError("餐點名稱尚未填入!");
       } else if (type.value === "") {
-        errorText.value = "餐點類型尚未填入!";
+        errorStore.SetError("餐點類型尚未填入!");
       } else if (price.value === "") {
-        errorText.value = "餐點價格尚未填入!";
+        errorStore.SetError("餐點價格尚未填入!");
       } else if (description.value === "") {
-        errorText.value = "餐點簡介尚未填入!";
+        errorStore.SetError("餐點簡介尚未填入!");
       } else if (!tempImage.value) {
-        errorText.value = "餐點圖片尚未上傳!";
+        errorStore.SetError("餐點圖片尚未上傳!");
       } else {
-        errorType.value = false;
-        showErrorMsg.value = false;
+        errorStore.errorType = false;
+        errorStore.showErrorMsg = false;
       }
     };
 
@@ -197,10 +186,6 @@ export default {
 
     return {
       showAdd,
-      errorText,
-      errorType,
-      showErrorMsg,
-      showLoader,
       name,
       type,
       price,

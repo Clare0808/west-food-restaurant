@@ -28,13 +28,13 @@
 
 <script>
 import { ref, onMounted } from "vue";
-import { buyList, showBuyGuide } from "../components/CartPage.vue";
-import { errorText, errorType } from "../components/LoginPage.vue";
-import { useUserStore } from "@/store/user";
 
-export const showErrorMsg = ref(false);
+import { useUserStore } from "@/store/user";
+import { errorUiStore } from "@/store/error";
+
+import { buyList, showBuyGuide } from "../components/CartPage.vue";
+
 export const showCheck = ref(false);
-export const showLoader = ref(false);
 
 export default {
   setup() {
@@ -44,12 +44,12 @@ export default {
     const removeList = ref([]);
 
     const userStore = useUserStore();
+    const errorStore = errorUiStore();
 
     const CalculatePrice = () => {
       for (const data of buyList.value) {
         totalPrice.value += data.total;
       }
-      console.log(buyList.value);
     };
 
     const GetDate = () => {
@@ -105,18 +105,12 @@ export default {
         throw new Error("Network response was not ok");
       }
 
-      errorText.value = "已成功送出訂單!";
-      errorType.value = false;
-      showErrorMsg.value = true;
-
       showCheck.value = false;
-      showLoader.value = true;
 
-      setTimeout(() => {
-        showErrorMsg.value = false;
+      errorStore.LoadSuccess("已成功送出訂單!");
 
-        window.location.reload();
-      }, 2000);
+      await errorStore.CloseLoadEle();
+      window.location.reload();
 
       const userMail = localStorage.getItem("userEmail");
 
@@ -156,11 +150,7 @@ export default {
     return {
       buyList,
       showBuyGuide,
-      errorText,
-      errorType,
-      showErrorMsg,
       showCheck,
-      showLoader,
       totalPrice,
       orderTime,
       orderCode,

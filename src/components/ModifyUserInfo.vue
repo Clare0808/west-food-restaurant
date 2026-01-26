@@ -17,11 +17,10 @@
 
 <script>
 import { ref, onMounted } from "vue";
-import { modifyColumn, showModify } from "../components/UserPage.vue";
-import { errorText, errorType } from "../components/LoginPage.vue";
 
-export const showErrorMsg = ref(false);
-export const showLoader = ref(false);
+import { errorUiStore } from "@/store/error";
+
+import { modifyColumn, showModify } from "../components/UserPage.vue";
 
 export default {
   setup() {
@@ -29,15 +28,12 @@ export default {
     const userInfoId = ref("");
     const userInfo = ref("");
 
+    const errorStore = errorUiStore();
+
     const HandleModify = async () => {
       if (modifyInfo.value === "") {
-        errorText.value = "請輸入新的資料!";
-        errorType.value = true;
-        showErrorMsg.value = true;
-
-        setTimeout(() => {
-          showErrorMsg.value = false;
-        }, 2000);
+        errorStore.SetError("請輸入新的資料!");
+        errorStore.CloseEle();
 
         return;
       }
@@ -58,18 +54,12 @@ export default {
         throw new Error("Network response was not ok");
       }
 
-      errorText.value = "資料修改成功!";
-      errorType.value = false;
-      showErrorMsg.value = true;
-
       showModify.value = false;
-      showLoader.value = true;
 
-      setTimeout(() => {
-        showErrorMsg.value = false;
+      errorStore.LoadSuccess("資料修改成功!");
 
-        window.location.reload();
-      }, 2000);
+      await errorStore.CloseLoadEle();
+      window.location.reload();
     };
 
     const FindUserInfoId = async () => {
@@ -98,8 +88,6 @@ export default {
     return {
       modifyColumn,
       showModify,
-      showErrorMsg,
-      showLoader,
       modifyInfo,
       userInfoId,
       userInfo,

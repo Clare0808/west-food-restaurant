@@ -1,17 +1,21 @@
 <template>
-  <div class="error-msg" :class="{ error: errorType, success: !errorType }">
-    <div class="text">{{ errorText }}</div>
+  <div
+    class="error-msg"
+    :class="{ error: errorStore.errorType, success: !errorStore.errorType }"
+  >
+    <div class="text">{{ errorStore.errorText }}</div>
   </div>
 </template>
 
 <script>
-import { errorText, errorType } from "../components/LoginPage.vue";
+import { errorUiStore } from "@/store/error";
 
 export default {
   setup() {
+    const errorStore = errorUiStore();
+
     return {
-      errorText,
-      errorType,
+      errorStore,
     };
   },
 };

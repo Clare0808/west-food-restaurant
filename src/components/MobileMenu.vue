@@ -14,12 +14,7 @@
       <router-link to="/user">
         <i class="fa-solid fa-user"></i>
       </router-link>
-      <router-link to="/login">
-        <i
-          class="fa-solid fa-arrow-right-from-bracket"
-          @click="HandleLogout"
-        ></i>
-      </router-link>
+      <i class="fa-solid fa-arrow-right-from-bracket" @click="HandleLogout"></i>
     </div>
     <router-link
       to="/login"
@@ -33,8 +28,11 @@
 <script>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { errorText, errorType, showError } from "../components/LoginPage.vue";
+
 import { useUserStore } from "@/store/user";
+import { errorUiStore } from "@/store/error";
+
+import { showLogoutCheck, showMobile } from "@/App.vue";
 
 export default {
   name: "MobileMenu",
@@ -44,24 +42,21 @@ export default {
 
     const router = useRouter();
     const userStore = useUserStore();
+    const errorStore = errorUiStore();
 
     const HandleLogout = () => {
-      userStore.logout();
-      router.push("/login");
+      showLogoutCheck.value = true;
+      showMobile.value = false;
     };
 
-    const ClickServer = () => {
+    const ClickServer = async () => {
       if (!userStore.isAuthenticated) {
+        showMobile.value = false;
+
+        errorStore.LoadError("請先登入帳號!");
+
+        await errorStore.CloseLoadEle();
         router.push("/login");
-
-        errorText.value = "請先登入帳號!";
-        errorType.value = true;
-
-        showError.value = true;
-
-        setTimeout(() => {
-          showError.value = false;
-        }, 2000);
       } else {
         router.push("/contact");
       }
@@ -73,6 +68,8 @@ export default {
     });
 
     return {
+      showLogoutCheck,
+      showMobile,
       showText,
       showImage,
       userStore,

@@ -1,8 +1,5 @@
 <template>
   <div class="user-page">
-    <transition name="x-slide">
-      <ErrorMessage class="error-msg" v-show="showErrorMsg" />
-    </transition>
     <transition name="fade">
       <div class="title" v-if="showFade">使用者中心</div>
     </transition>
@@ -26,9 +23,7 @@
                   @click="ClickModify('number')"
                 ></i>
               </div>
-              <div class="btn" @click="ClickBack" v-show="isAdmin">
-                進入後台
-              </div>
+              <div class="btn" @click="ClickBack" v-if="isAdmin">進入後台</div>
             </div>
             <div class="func-frame">
               <div class="sec-title">訂餐紀錄</div>
@@ -63,22 +58,18 @@
   <transition name="slide-modify">
     <ModifyUserInfo class="modify-page" v-if="showModify" />
   </transition>
-
-  <transition name="slide-loader">
-    <LoadingEle v-if="showLoader" />
-  </transition>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
+
 import { useRouter } from "vue-router";
-import ModifyUserInfo from "./ModifyUserInfo.vue";
-import ErrorMessage from "./ErrorMessage.vue";
-import { errorText, errorType } from "../components/LoginPage.vue";
-import { showErrorMsg, showLoader } from "../components/ModifyUserInfo.vue";
-import LoadingEle from "./LoadingEle.vue";
-import { showMobile } from "../App.vue";
+
 import { useUserStore } from "@/store/user";
+
+import ModifyUserInfo from "./ModifyUserInfo.vue";
+
+import { showMobile } from "../App.vue";
 
 export const modifyColumn = ref("");
 export const showModify = ref(false);
@@ -87,8 +78,6 @@ export default {
   name: "UserPage",
   components: {
     ModifyUserInfo,
-    ErrorMessage,
-    LoadingEle,
   },
   setup() {
     const showFade = ref(false);
@@ -143,18 +132,13 @@ export default {
 
       showMobile.value = false;
 
-      isAdmin.value = localStorage.getItem("inAdmin");
-      console.log(isAdmin.value);
+      isAdmin.value = localStorage.getItem("inAdmin") === "true";
 
       await GetOrderData();
       await GetUserInfo();
     });
 
     return {
-      errorText,
-      errorType,
-      showErrorMsg,
-      showLoader,
       showMobile,
       modifyColumn,
       showFade,
@@ -177,18 +161,13 @@ export default {
 
 <style scoped>
 .user-page {
+  height: 80vh;
   padding-bottom: 50px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   position: relative;
-}
-.error-msg {
-  position: fixed;
-  top: 80px;
-  right: 20px;
-  z-index: 2;
 }
 .title {
   color: #f0c42d;
@@ -372,34 +351,6 @@ img {
 }
 .slide-modify-enter-to,
 .slide-modify-leave-from {
-  opacity: 1;
-  transform: translate(-50%, -50%) translateY(0);
-}
-.x-slide-enter-active,
-.x-slide-leave-active {
-  transition: all 1s ease;
-}
-.x-slide-enter-from,
-.x-slide-leave-to {
-  opacity: 0;
-  transform: translateX(20px);
-}
-.x-slide-enter-to,
-.x-slide-leave-from {
-  opacity: 1;
-  transform: translateX(0);
-}
-.slide-loader-enter-active,
-.slide-loader-leave-active {
-  transition: all 1s ease;
-}
-.slide-loader-enter-from,
-.slide-loader-leave-to {
-  opacity: 0;
-  transform: translate(-50%, -50%) translateY(20px);
-}
-.slide-loader-enter-to,
-.slide-loader-leave-from {
   opacity: 1;
   transform: translate(-50%, -50%) translateY(0);
 }

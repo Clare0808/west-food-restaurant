@@ -1,8 +1,5 @@
 <template>
   <div class="login-page">
-    <transition name="x-slide">
-      <ErrorMessage class="error-msg" v-show="showError" />
-    </transition>
     <transition name="slide">
       <div class="func-box" v-if="showLogin">
         <div class="title">登入</div>
@@ -57,19 +54,14 @@
 <script>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import ErrorMessage from "./ErrorMessage.vue";
-import { showMobile, showMobileMenu } from "../App.vue";
-import { useUserStore } from "@/store/user";
 
-export const errorText = ref("");
-export const errorType = ref(false);
-export const showError = ref(false);
+import { useUserStore } from "@/store/user";
+import { errorUiStore } from "@/store/error";
+
+import { showMobile, showMobileMenu } from "../App.vue";
 
 export default {
   name: "LoginPage",
-  components: {
-    ErrorMessage,
-  },
   setup() {
     const showLogin = ref(false);
     const showSignUp = ref(false);
@@ -82,6 +74,7 @@ export default {
 
     const router = useRouter();
     const userStore = useUserStore();
+    const errorStore = errorUiStore();
 
     const ClickChangeType = () => {
       showLogin.value = !showLogin.value;
@@ -93,17 +86,16 @@ export default {
     const ClickLogin = async () => {
       ExamInputFrame();
 
-      if (!errorType.value) {
+      if (!errorStore.errorType) {
         try {
-          if (!errorType.value) {
+          if (!errorStore.errorType) {
             await userStore.login({
               email: email.value,
               password: password.value,
             });
 
             if (userStore.isAuthenticated) {
-              errorText.value = "登入成功!";
-              showError.value = true;
+              errorStore.LoadSuccess("登入成功!");
 
               localStorage.setItem("userEmail", email.value);
               localStorage.setItem("userName", name.value);
@@ -111,31 +103,25 @@ export default {
 
               CleanInput();
 
-              setTimeout(() => {
-                router.push("/");
-              }, 2000);
+              await errorStore.CloseLoadEle();
+              router.push("/");
             }
           }
         } catch (err) {
-          errorText.value = err.message;
-          errorType.value = true;
-          showError.value = true;
+          errorStore.SetError(err.message);
         }
       }
 
-      setTimeout(() => {
-        showError.value = false;
-      }, 2000);
+      errorStore.CloseEle();
     };
 
     const ClickSignUp = async () => {
       ExamInputFrame();
 
-      if (!errorType.value) {
+      if (!errorStore.errorType) {
         try {
-          if (!errorType.value) {
-            errorText.value = "註冊成功!";
-            showError.value = true;
+          if (!errorStore.errorType) {
+            errorStore.SetSuccess("註冊成功!");
 
             await userStore.signup({
               email: email.value,
@@ -151,15 +137,11 @@ export default {
             }, 2000);
           }
         } catch (err) {
-          errorText.value = err.message;
-          errorType.value = true;
-          showError.value = true;
+          errorStore.SetError(err.message);
         }
       }
 
-      setTimeout(() => {
-        showError.value = false;
-      }, 2000);
+      errorStore.CloseEle();
     };
 
     const CleanInput = () => {
@@ -171,24 +153,21 @@ export default {
     };
 
     const ExamInputFrame = () => {
-      errorType.value = true;
-      showError.value = true;
-
       if (email.value === "") {
-        errorText.value = "請輸入E-mail!";
+        errorStore.SetError("請輸入E-mail!");
       } else if (name.value === "" && showSignUp.value) {
-        errorText.value = "請輸入名稱!";
+        errorStore.SetError("請輸入名稱!");
       } else if (number.value === "" && showSignUp.value) {
-        errorText.value = "請輸入電話號碼!";
+        errorStore.SetError("請輸入電話號碼!");
       } else if (password.value === "") {
-        errorText.value = "請輸入密碼!";
+        errorStore.SetError("請輸入密碼!");
       } else if (confirmPassword.value === "" && showSignUp.value) {
-        errorText.value = "請再次輸入密碼!";
+        errorStore.SetError("請再次輸入密碼!");
       } else if (password.value !== confirmPassword.value && showSignUp.value) {
-        errorText.value = "密碼與確認密碼不相符!";
+        errorStore.SetError("密碼與確認密碼不相符!");
       } else {
-        errorType.value = false;
-        showError.value = false;
+        errorStore.errorType = false;
+        errorStore.showErrorMsg = false;
       }
     };
 
@@ -202,9 +181,6 @@ export default {
     return {
       showMobile,
       showMobileMenu,
-      errorText,
-      errorType,
-      showError,
       showLogin,
       showSignUp,
       email,
@@ -232,12 +208,6 @@ export default {
   justify-content: center;
   align-items: center;
   position: relative;
-}
-.error-msg {
-  position: absolute;
-  top: 0;
-  right: 20px;
-  z-index: 2;
 }
 .title {
   color: #f0c42d;
@@ -350,19 +320,5 @@ input:focus {
 .fade-enter-to,
 .fade-leave-from {
   opacity: 1;
-}
-.x-slide-enter-active,
-.x-slide-leave-active {
-  transition: all 1s ease;
-}
-.x-slide-enter-from,
-.x-slide-leave-to {
-  opacity: 0;
-  transform: translateX(20px);
-}
-.x-slide-enter-to,
-.x-slide-leave-from {
-  opacity: 1;
-  transform: translateX(0);
 }
 </style>

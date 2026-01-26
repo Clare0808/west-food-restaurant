@@ -1,8 +1,5 @@
 <template>
   <div class="menu-page">
-    <transition name="x-slide">
-      <ErrorMessage class="error-msg" v-show="showErrorMsg" />
-    </transition>
     <transition name="fade">
       <div class="title" v-if="showText">菜單 Menu</div>
     </transition>
@@ -77,16 +74,18 @@
 <script>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+
+import { useUserStore } from "@/store/user";
+import { errorUiStore } from "@/store/error";
+
 import OptionsDataRaw from "../assets/data/optionsData.json";
 import OrderDish from "./OrderDish.vue";
-import { dishAmount, showErrorMsg } from "../components/OrderDish.vue";
-import ErrorMessage from "./ErrorMessage.vue";
-import { errorText, errorType } from "../components/LoginPage.vue";
-import { showMobile } from "../App.vue";
-import { useUserStore } from "@/store/user";
 import DishClickGuide from "./guide/dishClick.vue";
 import PutInCartGuide from "./guide/putInCartClick.vue";
 import MenuGuide from "./guide/menuGuide.vue";
+
+import { dishAmount } from "../components/OrderDish.vue";
+import { showMobile } from "../App.vue";
 
 export const orderList = ref({});
 export const showOrderPage = ref(false);
@@ -96,7 +95,6 @@ export default {
   name: "MenuPage",
   components: {
     OrderDish,
-    ErrorMessage,
     DishClickGuide,
     PutInCartGuide,
     MenuGuide,
@@ -112,6 +110,7 @@ export default {
 
     const router = useRouter();
     const userStore = useUserStore();
+    const errorStore = errorUiStore();
 
     const GetDishData = async () => {
       const response = await fetch("/data/dishData.json");
@@ -145,7 +144,7 @@ export default {
       }
     };
 
-    const ClickDish = (data) => {
+    const ClickDish = async (data) => {
       if (userStore.isAuthenticated) {
         showOrderPage.value = true;
 
@@ -156,16 +155,10 @@ export default {
 
         dishAmount.value = 1;
       } else {
-        errorText.value = "請先登入帳號!";
-        errorType.value = true;
+        errorStore.LoadError("請先登入帳號!");
 
-        showErrorMsg.value = true;
-
-        setTimeout(() => {
-          showErrorMsg.value = false;
-
-          router.push("/login");
-        }, 2000);
+        await errorStore.CloseLoadEle();
+        router.push("/login");
       }
     };
 
@@ -225,15 +218,12 @@ export default {
     return {
       OptionsDataRaw,
       OptionsData,
-      errorText,
-      errorType,
       showMobile,
       orderList,
       dishList,
       filteredList,
       showOrderPage,
       showCartGuide,
-      showErrorMsg,
       showText,
       showElement,
       showDishClickGuide,
@@ -256,12 +246,6 @@ export default {
   justify-content: center;
   align-items: center;
   position: relative;
-}
-.error-msg {
-  position: fixed;
-  top: 80px;
-  right: 20px;
-  z-index: 2;
 }
 .title {
   color: #f0c42d;
@@ -411,20 +395,6 @@ export default {
 .slide-order-leave-from {
   opacity: 1;
   transform: translate(-50%, -50%) translateY(0);
-}
-.x-slide-enter-active,
-.x-slide-leave-active {
-  transition: all 1s ease;
-}
-.x-slide-enter-from,
-.x-slide-leave-to {
-  opacity: 0;
-  transform: translateX(20px);
-}
-.x-slide-enter-to,
-.x-slide-leave-from {
-  opacity: 1;
-  transform: translateX(0);
 }
 .slide-guide-enter-active,
 .slide-guide-leave-active {

@@ -20,20 +20,22 @@
 
 <script>
 import { ref } from "vue";
+
+import { useUserStore } from "@/store/user";
+import { errorUiStore } from "@/store/error";
+
 import {
   orderList,
   showOrderPage,
   showCartGuide,
 } from "../components/MenuPage.vue";
-import { errorText, errorType } from "../components/LoginPage.vue";
-import { useUserStore } from "@/store/user";
 
 export const dishAmount = ref(1);
-export const showErrorMsg = ref(false);
 
 export default {
   setup() {
     const userStore = useUserStore();
+    const errorStore = errorUiStore();
 
     const CountDishAmount = (operator) => {
       if (operator === "+") {
@@ -62,13 +64,8 @@ export default {
 
       showOrderPage.value = false;
 
-      errorText.value = "已成功加入購物車!";
-      errorType.value = false;
-      showErrorMsg.value = true;
-
-      setTimeout(() => {
-        showErrorMsg.value = false;
-      }, 2000);
+      errorStore.SetSuccess("已成功加入購物車!");
+      errorStore.CloseEle();
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -86,10 +83,7 @@ export default {
     return {
       orderList,
       showOrderPage,
-      showErrorMsg,
       showCartGuide,
-      errorText,
-      errorType,
       dishAmount,
       CountDishAmount,
       AddToCart,
