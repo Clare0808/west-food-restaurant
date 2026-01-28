@@ -39,13 +39,14 @@
 
 <script>
 import { ref, onMounted } from "vue";
-import { errorText, errorType } from "../../components/LoginPage.vue";
+
+import ModifyMenu from "./ModifyMenu.vue";
+import AddMenu from "./AddMenu.vue";
+
 import {
   removeData,
   showCheckEle,
 } from "../../components/backstage/ReviewPage.vue";
-import ModifyMenu from "./ModifyMenu.vue";
-import AddMenu from "./AddMenu.vue";
 
 export const showModify = ref(false);
 export const modifyList = ref({});
@@ -71,8 +72,6 @@ export default {
       showModify.value = true;
 
       modifyList.value = dishList.value[index];
-
-      console.log(modifyList.value);
     };
 
     const HandleAdd = () => {
@@ -84,8 +83,6 @@ export default {
 
       removeData.value.type = "menu";
       removeData.value.list = [dishList.value[index].id];
-
-      console.log(removeData.value);
     };
 
     onMounted(async () => {
@@ -93,8 +90,6 @@ export default {
     });
 
     return {
-      errorText,
-      errorType,
       removeData,
       showCheckEle,
       showModify,

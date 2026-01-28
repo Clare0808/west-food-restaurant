@@ -60,15 +60,13 @@
 
 <script>
 import { ref, onMounted } from "vue";
+
+import { errorUiStore } from "@/store/error";
+
 import {
   showModify,
   modifyList,
 } from "../../components/backstage/MenuPage.vue";
-import { errorText, errorType } from "../../components/LoginPage.vue";
-import {
-  showErrorMsg,
-  showLoader,
-} from "../../components/backstage/ReviewPage.vue";
 
 export default {
   setup() {
@@ -82,38 +80,44 @@ export default {
     const fileInput = ref(null);
     const tempImage = ref(null);
 
+    const errorStore = errorUiStore();
+
     const SendModify = async () => {
-      const response = await fetch(`http://localhost:3000/api/modify-menu`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: filteredData.value.id,
-          name: name.value,
-          type: type.value,
-          price: price.value,
-          description: description.value,
-          image: filteredData.value.image,
-        }),
-      });
+      if (
+        name.value !== "" ||
+        type.value !== "" ||
+        price.value !== "" ||
+        description.value !== ""
+      ) {
+        const response = await fetch(`http://localhost:3000/api/modify-menu`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: filteredData.value.id,
+            name: name.value,
+            type: type.value,
+            price: price.value,
+            description: description.value,
+            image: filteredData.value.image,
+          }),
+        });
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
 
-      errorText.value = "修改成功!";
-      errorType.value = false;
-      showErrorMsg.value = true;
+        showModify.value = false;
 
-      showModify.value = false;
-      showLoader.value = true;
+        errorStore.LoadSuccess("修改成功!");
 
-      setTimeout(() => {
-        showErrorMsg.value = false;
-
+        await errorStore.CloseLoadEle();
         window.location.reload();
-      }, 2000);
+      } else {
+        errorStore.SetError("餐點未修改!");
+        errorStore.CloseEle();
+      }
     };
 
     const CleanInput = () => {
@@ -161,7 +165,7 @@ export default {
     };
 
     onMounted(() => {
-      filteredData.value = modifyList.value;
+      filteredData.value = structuredClone(modifyList.value);
 
       CleanInput();
     });
@@ -169,10 +173,6 @@ export default {
     return {
       showModify,
       modifyList,
-      errorText,
-      errorType,
-      showErrorMsg,
-      showLoader,
       name,
       type,
       price,

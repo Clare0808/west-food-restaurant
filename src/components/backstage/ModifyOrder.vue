@@ -41,23 +41,23 @@
 
 <script>
 import { ref, watch, onMounted } from "vue";
+
+import { errorUiStore } from "@/store/error";
+
 import {
   showModify,
   modifyList,
   showOption,
   selectedOption,
 } from "../../components/backstage/OrderPage.vue";
-import { errorText, errorType } from "../../components/LoginPage.vue";
-import {
-  showErrorMsg,
-  showLoader,
-} from "../../components/backstage/ReviewPage.vue";
 
 export default {
   setup() {
     const orderList = ref({});
     const totalPrice = ref(0);
     const tempIndex = ref(-1);
+
+    const errorStore = errorUiStore();
 
     const GetModifyList = () => {
       orderList.value = structuredClone(modifyList.value);
@@ -142,27 +142,15 @@ export default {
           throw new Error("Network response was not ok");
         }
 
-        errorText.value = "已成功修改訂單!";
-        errorType.value = false;
-        showErrorMsg.value = true;
-
         showModify.value = false;
-        showLoader.value = true;
 
-        setTimeout(() => {
-          showErrorMsg.value = false;
+        errorStore.LoadSuccess("已成功修改訂單!");
 
-          window.location.reload();
-        }, 2000);
+        await errorStore.CloseLoadEle();
+        window.location.reload();
       } else {
-        errorText.value = "訂單未修改!";
-        errorType.value = true;
-
-        showErrorMsg.value = true;
-
-        setTimeout(() => {
-          showErrorMsg.value = false;
-        }, 2000);
+        errorStore.SetError("訂單未修改!");
+        errorStore.CloseEle();
       }
     };
 
@@ -212,10 +200,6 @@ export default {
       modifyList,
       showOption,
       selectedOption,
-      errorText,
-      errorType,
-      showErrorMsg,
-      showLoader,
       orderList,
       totalPrice,
       tempIndex,

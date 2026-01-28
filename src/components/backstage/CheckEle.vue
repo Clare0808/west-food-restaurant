@@ -10,16 +10,17 @@
 </template>
 
 <script>
+import { errorUiStore } from "@/store/error";
+
 import {
   removeData,
   showCheckEle,
-  showErrorMsg,
-  showLoader,
 } from "../../components/backstage/ReviewPage.vue";
-import { errorText, errorType } from "../../components/LoginPage.vue";
 
 export default {
   setup() {
+    const errorStore = errorUiStore();
+
     const RemoveData = async () => {
       const removeMap = {
         menu: "remove-menu",
@@ -44,27 +45,17 @@ export default {
         throw new Error("Network response was not ok");
       }
 
-      errorText.value = "刪除成功!";
-      errorType.value = false;
-      showErrorMsg.value = true;
-
       showCheckEle.value = false;
-      showLoader.value = true;
 
-      setTimeout(() => {
-        showErrorMsg.value = false;
+      errorStore.LoadSuccess("刪除成功!");
 
-        window.location.reload();
-      }, 2000);
+      await errorStore.CloseLoadEle();
+      window.location.reload();
     };
 
     return {
       removeData,
       showCheckEle,
-      showErrorMsg,
-      showLoader,
-      errorText,
-      errorType,
       RemoveData,
     };
   },

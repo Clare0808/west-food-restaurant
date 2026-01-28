@@ -26,17 +26,17 @@
 
 <script>
 import { ref, onMounted } from "vue";
+
+import { errorUiStore } from "@/store/error";
+
 import { showModify, modifyUser } from "./UserPage.vue";
-import { errorText, errorType } from "../../components/LoginPage.vue";
-import {
-  showErrorMsg,
-  showLoader,
-} from "../../components/backstage/ReviewPage.vue";
 
 export default {
   setup() {
     const showOption = ref(false);
     const selectedOption = ref("");
+
+    const errorStore = errorUiStore();
 
     const HandleModify = async () => {
       let roleType = selectedOption.value;
@@ -48,14 +48,8 @@ export default {
       }
 
       if (roleType === modifyUser.value.role) {
-        errorText.value = "資料未修改!";
-        errorType.value = true;
-
-        showErrorMsg.value = true;
-
-        setTimeout(() => {
-          showErrorMsg.value = false;
-        }, 2000);
+        errorStore.SetError("資料未修改!");
+        errorStore.CloseEle();
       } else {
         const response = await fetch(`http://localhost:3000/api/modify-data`, {
           method: "PATCH",
@@ -73,18 +67,12 @@ export default {
           throw new Error("Network response was not ok");
         }
 
-        errorText.value = "資料修改成功!";
-        errorType.value = false;
-        showErrorMsg.value = true;
-
         showModify.value = false;
-        showLoader.value = true;
 
-        setTimeout(() => {
-          showErrorMsg.value = false;
+        errorStore.LoadSuccess("資料修改成功!");
 
-          window.location.reload();
-        }, 2000);
+        await errorStore.CloseLoadEle();
+        window.location.reload();
       }
     };
 
@@ -117,10 +105,6 @@ export default {
     return {
       showOption,
       modifyUser,
-      errorText,
-      errorType,
-      showErrorMsg,
-      showLoader,
       selectedOption,
       HandleModify,
       ClickOption,

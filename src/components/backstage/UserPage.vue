@@ -24,11 +24,13 @@
 
 <script>
 import { ref, onMounted } from "vue";
+
+import ModifyUser from "./ModifyUser.vue";
+
 import {
   removeData,
   showCheckEle,
 } from "../../components/backstage/ReviewPage.vue";
-import ModifyUser from "./ModifyUser.vue";
 
 export const showModify = ref(false);
 export const modifyUser = ref({});

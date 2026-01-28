@@ -32,7 +32,7 @@
 
 <script>
 import { ref, onMounted } from "vue";
-import { errorText, errorType } from "../../components/LoginPage.vue";
+
 import {
   removeData,
   showCheckEle,
@@ -62,8 +62,6 @@ export default {
     });
 
     return {
-      errorText,
-      errorType,
       removeData,
       showCheckEle,
       contactData,

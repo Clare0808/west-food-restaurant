@@ -53,13 +53,14 @@
 
 <script>
 import { ref, onMounted } from "vue";
-import { errorText, errorType } from "../../components/LoginPage.vue";
+
+import ModifyOrder from "./ModifyOrder.vue";
+import DishOption from "./DishOption.vue";
+
 import {
   removeData,
   showCheckEle,
 } from "../../components/backstage/ReviewPage.vue";
-import ModifyOrder from "./ModifyOrder.vue";
-import DishOption from "./DishOption.vue";
 
 export const showModify = ref(false);
 export const modifyList = ref({});
@@ -92,8 +93,6 @@ export default {
         item.name = dataUser.filter((i) => i.email === userMail)[0].name;
         item.phone = dataUser.filter((i) => i.email === userMail)[0].number;
       }
-
-      console.log(orderData.value);
     };
 
     const ShowCheckEle = (index) => {
@@ -114,8 +113,6 @@ export default {
     });
 
     return {
-      errorText,
-      errorType,
       removeData,
       showCheckEle,
       showModify,
