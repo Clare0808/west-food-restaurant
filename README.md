@@ -6,7 +6,7 @@
 
 ## Demo 連結
 
-<img src="./assets/screenshot/homeScreenShot.png" width="700" />
+![首頁畫面](./assets/screenshot/homeScreenShot.png)
 
 
 ## 功能介紹
