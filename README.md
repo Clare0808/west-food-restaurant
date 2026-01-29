@@ -6,9 +6,9 @@
 
 ## Demo 連結
 
-<img src="./assets/screenshot/homeScreenShot.png" width="600" />
+<img src="./src/assets/screenshot/homeScreenShot.png" width="600" />
 
-src\assets\screenshot\homeScreenShot.png
+
 ## 功能介紹
 
 - 使用者註冊 / 登入
