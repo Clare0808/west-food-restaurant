@@ -14,6 +14,7 @@
         <div class="btn-frame">
           <div class="sign-up-btn" @click="ClickChangeType()">註冊</div>
           <div class="login-btn" @click="ClickLogin">登入</div>
+          <div class="google" @click="ClickGoogleLogin">Google</div>
         </div>
       </div>
     </transition>
@@ -44,6 +45,7 @@
         </div>
         <div class="btn-frame">
           <div class="sign-up-btn" @click="ClickChangeType()">登入</div>
+          <div class="google" @click="ClickGoogleLogin">Google</div>
           <div class="login-btn" @click="ClickSignUp">註冊</div>
         </div>
       </div>
@@ -113,6 +115,10 @@ export default {
       }
 
       errorStore.CloseEle();
+    };
+
+    const ClickGoogleLogin = () => {
+      window.location.href = "http://localhost:3000/api/auth-google";
     };
 
     const ClickSignUp = async () => {
@@ -190,6 +196,7 @@ export default {
       confirmPassword,
       ClickChangeType,
       ClickLogin,
+      ClickGoogleLogin,
       ClickSignUp,
       CleanInput,
       ExamInputFrame,

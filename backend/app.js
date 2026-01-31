@@ -2,6 +2,7 @@ const express = require("express")
 const cors = require("cors")
 const path = require("path")
 const bcrypt = require('bcrypt')
+const session = require("express-session")
 
 const app = express()
 
@@ -17,7 +18,10 @@ mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log(err))
 
-app.use(cors())
+app.use(cors({
+  origin: "http://localhost:8080",  // 前端網址
+  credentials: true                 // 允許 cookie
+}))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -62,6 +66,24 @@ async function createAdmin() {
 }
 
 createAdmin()
+
+const passport = require("./passport")
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false } 
+  })
+)
+
+// passport 初始化
+app.use(passport.initialize())
+app.use(passport.session())
+
+const authRoutes = require("./api/auth")
+app.use("/api", authRoutes)
 
 
 app.listen(3000, () => {
