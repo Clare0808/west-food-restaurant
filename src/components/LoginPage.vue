@@ -12,9 +12,17 @@
           <input type="password" v-model.trim="password" />
         </div>
         <div class="btn-frame">
-          <div class="sign-up-btn" @click="ClickChangeType()">註冊</div>
-          <div class="login-btn" @click="ClickLogin">登入</div>
-          <div class="google" @click="ClickGoogleLogin">Google</div>
+          <div class="local-btn-frame">
+            <div class="sign-up-btn" @click="ClickChangeType()">註冊</div>
+            <div class="login-btn" @click="ClickLogin">登入</div>
+          </div>
+          <div class="text">or</div>
+          <div class="google-btn" @click="ClickGoogleLogin">
+            以 <img src="@/assets/images/google.png" /><span class="google"
+              >Google</span
+            >
+            帳號登入
+          </div>
         </div>
       </div>
     </transition>
@@ -44,9 +52,17 @@
           <input type="password" v-model.trim="confirmPassword" />
         </div>
         <div class="btn-frame">
-          <div class="sign-up-btn" @click="ClickChangeType()">登入</div>
-          <div class="google" @click="ClickGoogleLogin">Google</div>
-          <div class="login-btn" @click="ClickSignUp">註冊</div>
+          <div class="local-btn-frame">
+            <div class="sign-up-btn" @click="ClickChangeType()">登入</div>
+            <div class="login-btn" @click="ClickSignUp">註冊</div>
+          </div>
+          <div class="text">or</div>
+          <div class="google-btn" @click="ClickGoogleLogin">
+            以 <img src="@/assets/images/google.png" /><span class="google"
+              >Google</span
+            >
+            帳號登入
+          </div>
         </div>
       </div>
     </transition>
@@ -117,7 +133,7 @@ export default {
       errorStore.CloseEle();
     };
 
-    const ClickGoogleLogin = () => {
+    const ClickGoogleLogin = async () => {
       window.location.href = "http://localhost:3000/api/auth-google";
     };
 
@@ -257,7 +273,8 @@ export default {
 }
 input {
   width: 100%;
-  height: 30px;
+  height: 20px;
+  font-size: 16px;
   border: 1px solid #ffffff;
   border-bottom: 1px solid #f0c42d;
 }
@@ -265,7 +282,7 @@ input:focus {
   outline: none;
   border-bottom: 2px solid #f0c42d;
 }
-.btn-frame {
+.local-btn-frame {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -299,6 +316,29 @@ input:focus {
 .login-btn:hover {
   color: #272727;
   background-color: #ffea9d;
+  cursor: pointer;
+}
+.text {
+  color: #d0d0d0;
+  font-size: 18px;
+  margin: 10px 0;
+}
+.google-btn {
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.google-btn img {
+  width: 25px;
+  height: 25px;
+  margin-left: 5px;
+}
+.google {
+  font-family: "Segoe UI", Arial;
+  margin: 0 5px;
+}
+.google-btn:hover {
   cursor: pointer;
 }
 

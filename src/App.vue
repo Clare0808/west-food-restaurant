@@ -99,10 +99,28 @@ export default {
       }
     };
 
-    onMounted(() => {
+    onMounted(async () => {
       showText.value = true;
       showImage.value = true;
       showMobileMenu.value = true;
+
+      if (!userStore.isAuthenticated) {
+        try {
+          await userStore.googleLogin();
+
+          errorStore.LoadSuccess("登入成功!");
+
+          localStorage.setItem("userEmail", userStore.user.email);
+          localStorage.setItem("userName", userStore.user.name);
+          localStorage.setItem("inAdmin", userStore.isAdmin);
+        } catch (err) {
+          errorStore.SetError(err.message);
+
+          router.push("/login");
+        }
+      }
+
+      await errorStore.CloseLoadEle();
     });
 
     return {

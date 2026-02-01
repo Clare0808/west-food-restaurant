@@ -38,11 +38,29 @@ export const useUserStore = defineStore("user", {
         throw new Error(msg);
       }
     },
+    async googleLogin() {
+      try {
+        const response = await axios.get("http://localhost:3000/api/profile", {
+          withCredentials: true,
+        });
+
+        this.user = response.data;
+        this.token = response.token;
+        this.isAuthenticated = true;
+
+        localStorage.setItem("token", this.token);
+      } catch (error) {
+        const msg = error.response?.data?.message || "登入失敗";
+        throw new Error(msg);
+      }
+    },
     logout() {
       this.user = null;
       this.token = null;
       this.isAuthenticated = false;
       localStorage.removeItem("token");
+
+      axios.get("http://localhost:3000/api/logout", { withCredentials: true });
     },
     async init(loginUser) {
       try {

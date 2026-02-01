@@ -114,6 +114,10 @@ export default {
       userNumber.value = data.filter(
         (info) => info.email === userMail
       )[0].number;
+
+      if (!userNumber.value) {
+        userNumber.value = "電話尚未填入";
+      }
     };
 
     const ClickModify = (type) => {
