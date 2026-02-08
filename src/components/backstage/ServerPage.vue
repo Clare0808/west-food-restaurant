@@ -48,7 +48,7 @@ export default {
     const errorStore = errorUiStore();
 
     const GetContact = async () => {
-      const response = await fetch(`http://localhost:3000/api/get-contact`);
+      const response = await fetch(`/api/get-contact`);
       const data = await response.json();
 
       contactData.value = data;

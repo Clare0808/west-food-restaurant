@@ -89,7 +89,7 @@ export default {
         price.value !== "" ||
         description.value !== ""
       ) {
-        const response = await fetch(`http://localhost:3000/api/modify-menu`, {
+        const response = await fetch(`/api/modify-menu`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -148,7 +148,7 @@ export default {
 
       fd.append("image", e.target.files[0]);
 
-      const res = await fetch("http://localhost:3000/api/upload-img", {
+      const res = await fetch("/api/upload-img", {
         method: "POST",
         body: fd,
       });

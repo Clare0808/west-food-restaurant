@@ -83,12 +83,10 @@ export default {
     const GetOrderData = async () => {
       const userMail = localStorage.getItem("userEmail");
 
-      const responseOrder = await fetch(
-        `http://localhost:3000/api/get-buy-orders`
-      );
+      const responseOrder = await fetch(`/api/get-buy-orders`);
       const dataOrder = await responseOrder.json();
 
-      const responseUser = await fetch(`http://localhost:3000/api/send-data`);
+      const responseUser = await fetch(`/api/send-data`);
       const dataUser = await responseUser.json();
 
       orderData.value = dataOrder;

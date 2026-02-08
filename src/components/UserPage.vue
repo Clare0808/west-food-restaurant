@@ -92,7 +92,7 @@ export default {
     const userStore = useUserStore();
 
     const GetOrderData = async () => {
-      const response = await fetch(`http://localhost:3000/api/get-buy-orders`);
+      const response = await fetch(`/api/get-buy-orders`);
       const data = await response.json();
 
       const userMail = localStorage.getItem("userEmail");
@@ -105,7 +105,7 @@ export default {
     };
 
     const GetUserInfo = async () => {
-      const response = await fetch(`http://localhost:3000/api/send-data`);
+      const response = await fetch(`/api/send-data`);
       const data = await response.json();
 
       const userMail = localStorage.getItem("userEmail");

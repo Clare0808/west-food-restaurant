@@ -66,7 +66,7 @@ export default {
     const SendReview = async () => {
       CreateDate();
 
-      const response = await fetch(`http://localhost:3000/api/send-review`, {
+      const response = await fetch(`/api/send-review`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

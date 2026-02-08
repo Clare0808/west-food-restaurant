@@ -31,7 +31,7 @@ export default {
       };
       const removeType = removeMap[removeData.value.type];
 
-      const response = await fetch(`http://localhost:3000/api/${removeType}`, {
+      const response = await fetch(`/api/${removeType}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

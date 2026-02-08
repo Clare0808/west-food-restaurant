@@ -48,7 +48,7 @@ export default {
     const errorStore = errorUiStore();
 
     const GetReview = async () => {
-      const response = await fetch(`http://localhost:3000/api/get-review`);
+      const response = await fetch(`/api/get-review`);
       const data = await response.json();
 
       reviewData.value = data;

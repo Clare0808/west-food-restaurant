@@ -156,7 +156,7 @@ export default {
     };
 
     const GetOrderData = async () => {
-      const response = await fetch(`http://localhost:3000/api/get-orders`);
+      const response = await fetch(`/api/get-orders`);
       const data = await response.json();
 
       const userMail = localStorage.getItem("userEmail");
@@ -208,7 +208,7 @@ export default {
     };
 
     const RemoveOrder = async (index) => {
-      const response = await fetch(`http://localhost:3000/api/remove-orders`, {
+      const response = await fetch(`/api/remove-orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -235,7 +235,7 @@ export default {
 
       const removeList = filteredData.value.map((item) => item._id);
 
-      const response = await fetch(`http://localhost:3000/api/remove-orders`, {
+      const response = await fetch(`/api/remove-orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

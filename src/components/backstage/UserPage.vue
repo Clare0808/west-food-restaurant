@@ -44,7 +44,7 @@ export default {
     const userList = ref([]);
 
     const GetUserInfo = async () => {
-      const response = await fetch(`http://localhost:3000/api/send-data`);
+      const response = await fetch(`/api/send-data`);
       const data = await response.json();
 
       userList.value = data;

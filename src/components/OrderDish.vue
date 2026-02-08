@@ -46,7 +46,7 @@ export default {
     };
 
     const AddToCart = async () => {
-      const response = await fetch(`http://localhost:3000/api/send-orders`, {
+      const response = await fetch(`/api/send-orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

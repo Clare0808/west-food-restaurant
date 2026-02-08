@@ -80,22 +80,19 @@ export default {
     };
 
     const SendOrders = async () => {
-      const response = await fetch(
-        `http://localhost:3000/api/send-buy-orders`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: localStorage.getItem("userEmail"),
-            list: buyList.value,
-            total: totalPrice.value,
-            code: orderCode.value,
-            date: orderTime.value,
-          }),
-        }
-      );
+      const response = await fetch(`/api/send-buy-orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: localStorage.getItem("userEmail"),
+          list: buyList.value,
+          total: totalPrice.value,
+          code: orderCode.value,
+          date: orderTime.value,
+        }),
+      });
 
       removeList.value = buyList.value.map((item) => item._id);
 
@@ -124,7 +121,7 @@ export default {
     };
 
     const RemoveOrder = async () => {
-      const response = await fetch(`http://localhost:3000/api/remove-orders`, {
+      const response = await fetch(`/api/remove-orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

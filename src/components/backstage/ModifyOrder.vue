@@ -119,22 +119,19 @@ export default {
       ) {
         const tempId = orderList.value._id;
 
-        const response = await fetch(
-          `http://localhost:3000/api/send-buy-orders`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: orderList.value.email,
-              list: orderList.value.list,
-              total: totalPrice.value,
-              code: orderList.value.code,
-              date: orderList.value.date,
-            }),
-          }
-        );
+        const response = await fetch(`/api/send-buy-orders`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: orderList.value.email,
+            list: orderList.value.list,
+            total: totalPrice.value,
+            code: orderList.value.code,
+            date: orderList.value.date,
+          }),
+        });
 
         await RemoveOrder(tempId);
 
@@ -155,18 +152,15 @@ export default {
     };
 
     const RemoveOrder = async (id) => {
-      const response = await fetch(
-        `http://localhost:3000/api/remove-buy-orders`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            list: [id],
-          }),
-        }
-      );
+      const response = await fetch(`/api/remove-buy-orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          list: [id],
+        }),
+      });
 
       if (!response.ok) {
         throw new Error("Network response was not ok");

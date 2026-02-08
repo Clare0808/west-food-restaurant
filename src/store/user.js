@@ -10,10 +10,7 @@ export const useUserStore = defineStore("user", {
   actions: {
     async signup(userData) {
       try {
-        const response = await axios.post(
-          "http://localhost:3000/api/signup",
-          userData
-        );
+        const response = await axios.post("/api/signup", userData);
         this.user = response.data.user;
       } catch (error) {
         // 後端回傳的錯誤訊息
@@ -23,10 +20,7 @@ export const useUserStore = defineStore("user", {
     },
     async login(credentials) {
       try {
-        const response = await axios.post(
-          "http://localhost:3000/api/login",
-          credentials
-        );
+        const response = await axios.post("/api/login", credentials);
         this.user = response.data.user;
         this.token = response.data.token;
         this.isAuthenticated = true;
@@ -39,7 +33,7 @@ export const useUserStore = defineStore("user", {
     },
     async googleLogin() {
       try {
-        const response = await axios.get("http://localhost:3000/api/profile", {
+        const response = await axios.get("/api/profile", {
           withCredentials: true,
         });
 
@@ -59,14 +53,13 @@ export const useUserStore = defineStore("user", {
       this.isAuthenticated = false;
       localStorage.removeItem("token");
 
-      axios.get("http://localhost:3000/api/logout", { withCredentials: true });
+      axios.get("/api/logout", { withCredentials: true });
     },
     async init(loginUser) {
       try {
-        const response = await axios.post(
-          "http://localhost:3000/api/now-login",
-          { email: loginUser }
-        );
+        const response = await axios.post("/api/now-login", {
+          email: loginUser,
+        });
 
         this.user = response.data.user;
         return this.user;
@@ -77,10 +70,11 @@ export const useUserStore = defineStore("user", {
     },
     async modifyUserData(id, column, data) {
       try {
-        const response = await axios.patch(
-          "http://localhost:3000/api/modify-data",
-          { id: id, column: column, data: data }
-        );
+        const response = await axios.patch("/api/modify-data", {
+          id: id,
+          column: column,
+          data: data,
+        });
 
         this.user = response.data;
         return this.user;

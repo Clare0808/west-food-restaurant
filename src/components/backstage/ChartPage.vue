@@ -54,9 +54,7 @@ export default {
         dishSold.value.push(tempList);
       }
 
-      const responseOrder = await fetch(
-        `http://localhost:3000/api/get-buy-orders`
-      );
+      const responseOrder = await fetch(`/api/get-buy-orders`);
       const dataOrder = await responseOrder.json();
 
       for (const sold of dishSold.value) {
@@ -71,7 +69,7 @@ export default {
     };
 
     const GetReviewData = async () => {
-      const response = await fetch(`http://localhost:3000/api/get-review`);
+      const response = await fetch(`/api/get-review`);
       const data = await response.json();
 
       for (let i = 1; i <= 5; i++) {
@@ -93,7 +91,7 @@ export default {
     };
 
     const GetRevenueData = async () => {
-      const response = await fetch(`http://localhost:3000/api/get-buy-orders`);
+      const response = await fetch(`/api/get-buy-orders`);
       const data = await response.json();
 
       for (const item of data) {

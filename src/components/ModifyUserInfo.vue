@@ -38,7 +38,7 @@ export default {
         return;
       }
 
-      const response = await fetch(`http://localhost:3000/api/modify-data`, {
+      const response = await fetch(`/api/modify-data`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +63,7 @@ export default {
     };
 
     const FindUserInfoId = async () => {
-      const response = await fetch(`http://localhost:3000/api/send-data`);
+      const response = await fetch(`/api/send-data`);
       const data = await response.json();
 
       const userMail = localStorage.getItem("userEmail");

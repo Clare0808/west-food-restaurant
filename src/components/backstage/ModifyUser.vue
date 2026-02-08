@@ -51,7 +51,7 @@ export default {
         errorStore.SetError("資料未修改!");
         errorStore.CloseEle();
       } else {
-        const response = await fetch(`http://localhost:3000/api/modify-data`, {
+        const response = await fetch(`/api/modify-data`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
