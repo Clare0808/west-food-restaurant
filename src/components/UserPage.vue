@@ -115,6 +115,14 @@ export default {
         (info) => info.email === userMail
       )[0].number;
 
+      const userRole = data.filter((info) => info.email === userMail)[0].role;
+
+      if (userRole === "admin") {
+        isAdmin.value = true;
+      } else {
+        isAdmin.value = false;
+      }
+
       if (!userNumber.value) {
         userNumber.value = "電話尚未填入";
       }
@@ -135,8 +143,6 @@ export default {
       showSlide.value = true;
 
       showMobile.value = false;
-
-      isAdmin.value = localStorage.getItem("inAdmin") === "true";
 
       await GetOrderData();
       await GetUserInfo();
@@ -215,7 +221,7 @@ img {
   cursor: pointer;
 }
 .user-info-frame {
-  font-size: 24px;
+  font-size: 22px;
   padding: 20px;
   display: flex;
   flex-direction: column;

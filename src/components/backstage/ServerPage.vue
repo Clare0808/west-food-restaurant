@@ -33,6 +33,8 @@
 <script>
 import { ref, onMounted } from "vue";
 
+import { errorUiStore } from "@/store/error";
+
 import {
   removeData,
   showCheckEle,
@@ -43,11 +45,18 @@ export default {
   setup() {
     const contactData = ref([]);
 
+    const errorStore = errorUiStore();
+
     const GetContact = async () => {
       const response = await fetch(`http://localhost:3000/api/get-contact`);
       const data = await response.json();
 
       contactData.value = data;
+
+      if (contactData.value.length === 0) {
+        errorStore.SetError("尚無聯絡內容!");
+        errorStore.CloseEle();
+      }
     };
 
     const ShowCheckEle = (index) => {

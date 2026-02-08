@@ -39,6 +39,7 @@ export default {
     const starClick = ref(0);
     const reviewContent = ref("");
     const reviewDate = ref("");
+    const userName = ref("");
 
     const errorStore = errorUiStore();
 
@@ -71,7 +72,7 @@ export default {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: localStorage.getItem("userName"),
+          name: userName.value,
           stars: starClick.value,
           content: reviewContent.value,
           date: reviewDate.value,
@@ -100,17 +101,30 @@ export default {
       reviewDate.value = year + "-" + month + "-" + day;
     };
 
+    const GetUserInfo = async () => {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/send-data`
+      );
+      const data = await response.json();
+
+      const userMail = localStorage.getItem("userEmail");
+
+      userName.value = data.filter((info) => info.email === userMail)[0].name;
+    };
+
     return {
       showWriteReview,
       starTouch,
       starClick,
       reviewContent,
       reviewDate,
+      userName,
       HandleStarTouch,
       HandleStarLeave,
       ClickStart,
       SendReview,
       CreateDate,
+      GetUserInfo,
     };
   },
 };

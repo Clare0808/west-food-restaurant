@@ -268,7 +268,7 @@ nav {
   position: fixed;
   top: 90px;
   right: 20px;
-  z-index: 2;
+  z-index: 3;
 }
 
 .slide-check-enter-active,

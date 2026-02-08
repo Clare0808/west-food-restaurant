@@ -15,7 +15,6 @@ export const useUserStore = defineStore("user", {
           userData
         );
         this.user = response.data.user;
-        this.isAuthenticated = true;
       } catch (error) {
         // 後端回傳的錯誤訊息
         const msg = error.response?.data?.message || "註冊失敗";

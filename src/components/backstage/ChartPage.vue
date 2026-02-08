@@ -200,7 +200,7 @@ export default {
             y: {
               beginAtZero: true,
               ticks: {
-                stepSize: 1, // 每格間距為 1，確保都是整數
+                stepSize: 10, // 每格間距為 1，確保都是整數
               },
             },
           },

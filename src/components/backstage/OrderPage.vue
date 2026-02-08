@@ -54,6 +54,8 @@
 <script>
 import { ref, onMounted } from "vue";
 
+import { errorUiStore } from "@/store/error";
+
 import ModifyOrder from "./ModifyOrder.vue";
 import DishOption from "./DishOption.vue";
 
@@ -76,6 +78,8 @@ export default {
   setup() {
     const orderData = ref([]);
 
+    const errorStore = errorUiStore();
+
     const GetOrderData = async () => {
       const userMail = localStorage.getItem("userEmail");
 
@@ -88,6 +92,11 @@ export default {
       const dataUser = await responseUser.json();
 
       orderData.value = dataOrder;
+
+      if (orderData.value.length === 0) {
+        errorStore.SetError("尚無訂單!");
+        errorStore.CloseEle();
+      }
 
       for (const item of orderData.value) {
         item.name = dataUser.filter((i) => i.email === userMail)[0].name;

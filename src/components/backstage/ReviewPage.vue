@@ -33,6 +33,8 @@
 <script>
 import { ref, onMounted } from "vue";
 
+import { errorUiStore } from "@/store/error";
+
 export const removeData = ref({});
 export const showCheckEle = ref(false);
 export const showErrorMsg = ref(false);
@@ -43,11 +45,18 @@ export default {
   setup() {
     const reviewData = ref([]);
 
+    const errorStore = errorUiStore();
+
     const GetReview = async () => {
       const response = await fetch(`http://localhost:3000/api/get-review`);
       const data = await response.json();
 
       reviewData.value = data;
+
+      if (reviewData.value.length === 0) {
+        errorStore.SetError("尚無評論!");
+        errorStore.CloseEle();
+      }
     };
 
     const ShowCheckEle = (index) => {

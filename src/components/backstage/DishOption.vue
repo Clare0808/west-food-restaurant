@@ -26,7 +26,9 @@
 
 <script>
 import { ref, onMounted } from "vue";
+
 import optionsDataRaw from "../../assets/data/optionsData.json";
+
 import {
   showOption,
   selectedOption,
