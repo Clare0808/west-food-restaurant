@@ -1,4 +1,0 @@
-啟動 MongoDB Server
-cd "C:\Program Files\MongoDB\Server\4.2\bin"
-.\mongod.exe --dbpath "C:\mongodb\data\db"
-
