@@ -4,7 +4,7 @@
 具備登入功能、角色權限與後台管理概念。
 
 
-## Demo 連結
+## 首頁畫面
 
 <img src="./src/assets/screenshot/homeScreenShot.png" width="600" />
 
@@ -37,7 +37,7 @@
 - bcrypt
 
 ### Other
-- Docker（尚未導入）
+- Docker
 
 ## 專案說明
 
