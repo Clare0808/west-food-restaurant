@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",
+    "dev:local": "node -e \"process.env.MONGO_URL='mongodb://127.0.0.1:27017/west_food'; require('./app')\"",
     "start": "node app.js"
   },
   "keywords": [],

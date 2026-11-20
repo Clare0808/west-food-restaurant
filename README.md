@@ -56,6 +56,7 @@ git clone https://github.com/Clare0808/west-food-restaurant.git
 
 ```bash
 npm install
+cd backend && npm install
 ```
 
 ### 3. 環境需求
@@ -72,6 +73,10 @@ npm install
 PORT=3000
 MONGO_URL=mongodb://127.0.0.1:27017/west_food
 JWT_SECRET=yourSecretKey
+SESSION_SECRET=yourSessionSecret
+GOOGLE_CLIENT_ID=yourGoogleClientId
+GOOGLE_CLIENT_SECRET=yourGoogleClientSecret
+GOOGLE_CALLBACK_URL=http://localhost:3000/api/auth/google/callback
 ```
 
 ### 5. 啟動專案
@@ -79,6 +84,8 @@ JWT_SECRET=yourSecretKey
 ```bash
 npm run start
 ```
+
+從專案根目錄執行此指令會使用本機的 MongoDB (`127.0.0.1:27017`)；請先啟動 MongoDB。若 `backend/.env` 的 `MONGO_URL` 設為 Docker 專用的 `mongodb://mongo:27017/west_food`，單獨執行後端時需改用本機網址。
 
 若要分開啟動 (選擇性) :
 
@@ -91,5 +98,7 @@ npm run serve
 #### 後端
 ```bash
 cd backend
-npm run dev
+npm run dev:local
 ```
+
+若使用 Docker 網路中的 MongoDB，才在 `backend` 目錄執行 `npm run dev`（讀取 `.env` 中的 `MONGO_URL`）。

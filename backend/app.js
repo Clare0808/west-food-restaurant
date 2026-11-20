@@ -14,10 +14,6 @@ app.use("/images/_temp", express.static(path.join(__root, "uploads/_temp")))
 const mongoose = require("mongoose")
 require("dotenv").config()
 
-mongoose.connect(process.env.MONGO_URL)
-  .then(() => console.log("MongoDB connected"))
-  .catch(err => console.log(err))
-
 app.use(cors({
   origin: "http://localhost:8080",  // 前端網址
   credentials: true                 // 允許 cookie
@@ -65,8 +61,6 @@ async function createAdmin() {
   }
 }
 
-createAdmin()
-
 const passport = require("./passport")
 
 app.use(
@@ -86,6 +80,21 @@ const authRoutes = require("./api/auth")
 app.use("/api", authRoutes)
 
 
-app.listen(3000, () => {
-  console.log("Backend running on http://localhost:3000")
-})
+async function start() {
+  try {
+    await mongoose.connect(process.env.MONGO_URL)
+    console.log("MongoDB connected")
+    await createAdmin()
+
+    const port = process.env.PORT || 3000
+    app.listen(port, () => {
+      console.log(`Backend running on http://localhost:${port}`)
+    })
+  } catch (err) {
+    console.error("Backend startup failed:", err)
+    process.exitCode = 1
+    await mongoose.disconnect()
+  }
+}
+
+start()
